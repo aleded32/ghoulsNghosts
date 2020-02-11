@@ -39,6 +39,8 @@ void spawn(Sprite floor, Sprite empty, Texture tile[3],  int tileX, int tileY)
 
 
 
+
+
 int main()
 {
 	app.setFramerateLimit(60);
@@ -52,6 +54,10 @@ int main()
 
 	Texture tile[2] = { empty, floorText};
 
+	Vector2f velocity = Vector2f(0, 1.0f);
+	const Vector2f accelaration = Vector2f(0, 0.981f);
+	float x = 1*32;
+	float y = 7*32;
 
 
 	
@@ -65,7 +71,7 @@ int main()
 	Sprite player;
 	playerText.loadFromFile("player.png");
 	player.setTexture(playerText);
-	player.setPosition(1*32, 7*32);
+	player.setPosition(x, y);
 	
 	Sprite chest;
 	chestText.loadFromFile("chest.png");
@@ -124,18 +130,59 @@ int main()
 		{
 			if (e.type == Event::Closed) 
 			{
-			
+				
 				app.close();
 			}
-		
+			
 		}
+
+		if (Keyboard::isKeyPressed(Keyboard::D))
+		{
+
+			x = x + 2;
+			player.setPosition(x, y);
+
+		}
+		else if (Keyboard::isKeyPressed(Keyboard::A))
+		{
+
+			x = x - 2;
+			player.setPosition(x, y);
+
+		}
+
+
+		
+
+		player.setPosition(x, y);
 
 		app.clear();
 		
 		app.draw(background);
 		app.draw(chest);
-		app.draw(player);
 		
+		
+		//gravity for player
+		
+
+		int playerX = int(x / 32);
+		int playerY = int(y / 32);
+		
+		if (gamefield[playerY+1][playerX] == 1) 
+		{
+			y = 224;
+			velocity.y = NULL;
+			
+			cout << "collision";
+		}
+		else if (gamefield[playerY][playerX] == 0)
+		{
+			velocity.x = velocity.x + accelaration.x;
+			velocity.y = velocity.y + accelaration.y;
+
+			x += velocity.x;
+			y += velocity.y;
+		}
 		
 		
 		for (int i = 0; i < 9; i++)
@@ -149,8 +196,8 @@ int main()
 			}
 			
 		}
-
-		
+		app.draw(player);
+		//Gravity(velocity, accelaration, x, y, player);
 		app.display();
 	}
 	return 0;
