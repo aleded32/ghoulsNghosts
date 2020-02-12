@@ -54,8 +54,11 @@ int main()
 
 	Texture tile[2] = { empty, floorText};
 
-	Vector2f velocity = Vector2f(0, 1.0f);
-	const Vector2f accelaration = Vector2f(0, 0.981f);
+	Vector2f velocity = Vector2f(0, 0.1f);
+	const Vector2f accelaration = Vector2f(0, 0.12f);
+	const Vector2f accelarationJump = Vector2f(0, 4.0f);
+	bool isJumping;
+	bool wall;
 	float x = 1*32;
 	float y = 7*32;
 
@@ -103,7 +106,7 @@ int main()
 	 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 	 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 	 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-	 1,1,1,1,1,0,0,1,1,1,1,1,1,1,1,0,1,1,1,1,1,1
+	 1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1
 	 
 	};
 
@@ -136,11 +139,12 @@ int main()
 			
 		}
 
-		if (Keyboard::isKeyPressed(Keyboard::D))
+		if (Keyboard::isKeyPressed(Keyboard::D) /*&& wall == false*/)
 		{
 
 			x = x + 2;
 			player.setPosition(x, y);
+			
 
 		}
 		else if (Keyboard::isKeyPressed(Keyboard::A))
@@ -150,6 +154,31 @@ int main()
 			player.setPosition(x, y);
 
 		}
+
+		
+			if (player.getPosition().y >= 220 && Keyboard::isKeyPressed(Keyboard::Space) && isJumping == false) 
+			{
+				isJumping = true;
+				velocity.x = velocity.x - accelarationJump.x;
+				velocity.y = velocity.y - accelarationJump.y;
+
+				x += velocity.x;
+				y += velocity.y;
+			}
+			else if (player.getPosition().y <= 220)
+			{
+				velocity.x = velocity.x + accelaration.x;
+				velocity.y = velocity.y + accelaration.y;
+
+				x += velocity.x;
+				y += velocity.y;
+			}
+
+		
+			
+			
+
+		
 
 
 		
@@ -172,6 +201,9 @@ int main()
 		{
 			y = 224;
 			velocity.y = NULL;
+			velocity.x = 0;
+			isJumping = false;
+			
 			
 			cout << "collision";
 		}
