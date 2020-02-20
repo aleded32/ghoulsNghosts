@@ -7,13 +7,14 @@ using namespace sf;
 
 RenderWindow app(VideoMode(700, 285), "snakesNtigers");
 
-
+View playerView;
 
 Texture floorText;
 Texture empty;
 Texture backgroundText;
 Texture playerText;
 Texture chestText;
+Texture wallT;
 
 
 
@@ -22,15 +23,17 @@ Texture chestText;
 int tileX = 1;
 int tileY = 8;
 
-void spawn(Sprite floor, Sprite empty, Texture tile[3],  int tileX, int tileY) 
+void spawn(Sprite floor, Sprite empty, Sprite wall, Texture tile[3],  int tileX, int tileY) 
 {
 
 	floor.setTexture(tile[0]);
 	floor.setPosition(tileX * 32, tileY * 32);
 	empty.setTexture(tile[1]);
 	empty.setPosition(tileX * 32, tileY * 32);
-	
+	wall.setTexture(tile[2]);
+	wall.setPosition(tileX * 32, tileY * 32);
 
+	app.draw(wall);
 	app.draw(floor);
 	app.draw(empty);
 
@@ -44,7 +47,12 @@ void spawn(Sprite floor, Sprite empty, Texture tile[3],  int tileX, int tileY)
 int main()
 {
 	app.setFramerateLimit(60);
+	
+
+
 	Sprite floor;
+	Sprite wall;
+	wall.setColor(Color::Transparent);
 	floorText.loadFromFile("floor.png");
 	
 	
@@ -52,14 +60,14 @@ int main()
 	
 
 
-	Texture tile[2] = { empty, floorText};
+	Texture tile[3] = { empty, floorText, wallT};
 
 	Vector2f velocity = Vector2f(0, 0.1f);
 	const Vector2f accelaration = Vector2f(0, 0.12f);
 	const Vector2f accelarationJump = Vector2f(0, 4.0f);
 	bool isJumping;
-	bool wall;
-	float x = 1*32;
+	
+	float x = 6*32;
 	float y = 7*32;
 
 
@@ -90,36 +98,31 @@ int main()
 	empty.setColor(Color::Transparent);
 
 
-	/* 0 = nothing 
-	   1 = platform
-	   2 = chest
-	   3 = ogre
-	   4 = crow
-	*/
 	int gamefield[9][22] = 
 	{
-	 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-	 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-	 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-	 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-	 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-	 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-	 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-	 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+	 2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+	 2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+	 2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+	 2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+	 2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+	 2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+	 2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+	 2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 	 1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1
 	 
 	};
 
 
-
+	//initallizes gamefield
 	for(int i = 0; i < 9; i++)
 	{
 		for(int j = 0; j<22; j++)
 		{
 		
-			cout << gamefield[i][j] << " ";
+			gamefield[tileY][tileX] = 2;
 			gamefield[tileY][tileX] = 0;
 			gamefield[tileY][tileX] = 1;
+			
 			
 		
 		}
@@ -191,15 +194,30 @@ int main()
 		app.draw(chest);
 		
 		
-		//gravity for player
+		
 		
 
 		int playerX = int(x / 32);
 		int playerY = int(y / 32);
 		
+		
+		
+			playerView.reset(sf::FloatRect(0, 0, 300, 120));
+			playerView.setCenter(x, y);
+			
+
+			if (x <= 5 * 32) 
+			{
+			
+				playerView.setCenter(150, y);
+			}
+		
+		app.setView(playerView);
+
+		
 		if (gamefield[playerY+1][playerX] == 1) 
 		{
-			y = 224;
+			
 			velocity.y = NULL;
 			velocity.x = 0;
 			isJumping = false;
@@ -215,6 +233,16 @@ int main()
 			x += velocity.x;
 			y += velocity.y;
 		}
+		if (gamefield[playerY][playerX + 1] == 2)
+		{
+
+			x = 0;
+			
+			//isJumping = false;
+
+
+			cout << "collision";
+		}
 		
 		
 		for (int i = 0; i < 9; i++)
@@ -222,7 +250,7 @@ int main()
 			for (int j = 0; j < 22; j++)
 			{
 				
-				spawn(floor ,empty, &tile[gamefield[i][j]], j, i);
+				spawn(floor ,empty,wall, &tile[gamefield[i][j]], j, i);
 				
 
 			}
