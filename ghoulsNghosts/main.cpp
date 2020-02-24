@@ -1,20 +1,25 @@
 #include <iostream>
 #include <SFML/Graphics.hpp>
+#include <SFML/System.hpp>
+#include "player.h"
+#include "enemy.h"
+
 
 using namespace std;
 using namespace sf;
 
 
-RenderWindow app(VideoMode(700, 285), "snakesNtigers");
 
-View playerView;
+
 
 Texture floorText;
 Texture empty;
 Texture backgroundText;
-Texture playerText;
+
+
 Texture chestText;
 Texture wallT;
+
 
 
 
@@ -48,7 +53,7 @@ int main()
 {
 	app.setFramerateLimit(60);
 	
-
+	
 
 	Sprite floor;
 	Sprite wall;
@@ -62,13 +67,12 @@ int main()
 
 	Texture tile[3] = { empty, floorText, wallT};
 
-	Vector2f velocity = Vector2f(0, 0.1f);
-	const Vector2f accelaration = Vector2f(0, 0.12f);
-	const Vector2f accelarationJump = Vector2f(0, 4.0f);
-	bool isJumping;
 	
-	float x = 6*32;
-	float y = 7*32;
+	
+	Player player;
+
+	snake Snake;
+
 
 
 	
@@ -79,10 +83,7 @@ int main()
 	background.setPosition(0, 0);
 	background.setScale(0.5f, 0.5f);
 
-	Sprite player;
-	playerText.loadFromFile("player.png");
-	player.setTexture(playerText);
-	player.setPosition(x, y);
+	
 	
 	Sprite chest;
 	chestText.loadFromFile("chest.png");
@@ -90,9 +91,10 @@ int main()
 	chest.setPosition(18 * 32, 7 * 32);
 
 
-	
-	
 
+	
+	
+	Thread t1(&Player::PlayerView, &player);
 
 	Sprite empty;
 	empty.setColor(Color::Transparent);
@@ -118,7 +120,8 @@ int main()
 	{
 		for(int j = 0; j<22; j++)
 		{
-		
+			
+			
 			gamefield[tileY][tileX] = 2;
 			gamefield[tileY][tileX] = 0;
 			gamefield[tileY][tileX] = 1;
@@ -137,56 +140,53 @@ int main()
 			if (e.type == Event::Closed) 
 			{
 				
+				t1.wait();
+				
 				app.close();
 			}
 			
 		}
 
-		if (Keyboard::isKeyPressed(Keyboard::D) /*&& wall == false*/)
-		{
+			player.move();
+			player.player.setPosition(player.x, player.y);
 
-			x = x + 2;
-			player.setPosition(x, y);
+			//launching viewport of player on a different thread
+			t1.launch();
 			
+
+		int playerX = int(player.x / 32);
+		int playerY = int(player.y / 32);
+		int snakeX = int(Snake.x / 32);
+		int snakeY = int(Snake.y / 33);
+
+		//collision for player		
+		if (gamefield[playerY+1][playerX] == 1) 
+		{
+			velocity.y = NULL;
+			velocity.x = 0;
+			isJumping = false;
 
 		}
-		else if (Keyboard::isKeyPressed(Keyboard::A))
+		else if (gamefield[playerY][playerX] == 0)
+		{
+			velocity.x = velocity.x + gravity.x;
+			velocity.y = velocity.y + gravity.y;
+
+			player.x += velocity.x;
+			 player.y += velocity.y;
+		}
+		if (gamefield[playerY][playerX + 1] == 2)
 		{
 
-			x = x - 2;
-			player.setPosition(x, y);
+			player.x = 0;
+		}
+		if (snakeX == playerX && snakeY == playerY)
+		{
 
+			player.death();
 		}
 
-		
-			if (player.getPosition().y >= 220 && Keyboard::isKeyPressed(Keyboard::Space) && isJumping == false) 
-			{
-				isJumping = true;
-				velocity.x = velocity.x - accelarationJump.x;
-				velocity.y = velocity.y - accelarationJump.y;
-
-				x += velocity.x;
-				y += velocity.y;
-			}
-			else if (player.getPosition().y <= 220)
-			{
-				velocity.x = velocity.x + accelaration.x;
-				velocity.y = velocity.y + accelaration.y;
-
-				x += velocity.x;
-				y += velocity.y;
-			}
-
-		
-			
-			
-
-		
-
-
-		
-
-		player.setPosition(x, y);
+		cout << player.playerHealth << endl;    
 
 		app.clear();
 		
@@ -197,52 +197,9 @@ int main()
 		
 		
 
-		int playerX = int(x / 32);
-		int playerY = int(y / 32);
+			
 		
-		
-		
-			playerView.reset(sf::FloatRect(0, 0, 300, 120));
-			playerView.setCenter(x, y);
 			
-
-			if (x <= 5 * 32) 
-			{
-			
-				playerView.setCenter(150, y);
-			}
-		
-		app.setView(playerView);
-
-		
-		if (gamefield[playerY+1][playerX] == 1) 
-		{
-			
-			velocity.y = NULL;
-			velocity.x = 0;
-			isJumping = false;
-			
-			
-			cout << "collision";
-		}
-		else if (gamefield[playerY][playerX] == 0)
-		{
-			velocity.x = velocity.x + accelaration.x;
-			velocity.y = velocity.y + accelaration.y;
-
-			x += velocity.x;
-			y += velocity.y;
-		}
-		if (gamefield[playerY][playerX + 1] == 2)
-		{
-
-			x = 0;
-			
-			//isJumping = false;
-
-
-			cout << "collision";
-		}
 		
 		
 		for (int i = 0; i < 9; i++)
@@ -250,13 +207,16 @@ int main()
 			for (int j = 0; j < 22; j++)
 			{
 				
-				spawn(floor ,empty,wall, &tile[gamefield[i][j]], j, i);
+				
+			spawn(floor ,empty,wall, &tile[gamefield[i][j]], j, i);
 				
 
 			}
 			
 		}
-		app.draw(player);
+
+		app.draw(Snake.Enemy);
+		app.draw(player.player);
 		//Gravity(velocity, accelaration, x, y, player);
 		app.display();
 	}

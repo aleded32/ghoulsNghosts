@@ -33,16 +33,18 @@ public:
 	float x;
 	float y;
 	Sprite player;
-	
+	int playerHealth;
 	View playerView;
 	
 
 	Player()
 	{
 		
-
+		playerHealth = 300;
 		 x = 1*32;
 		 y = 7*32;
+
+		
 
 		playerText.loadFromFile("player.png");
 		player.setTexture(playerText);
@@ -65,6 +67,10 @@ public:
 			{
 			
 				playerView.setCenter(150, y);
+			}
+			else if (x >= 17 * 32) 
+			{
+				playerView.setCenter(550, y);
 			}
 		
 		app.setView(playerView);
@@ -108,6 +114,16 @@ public:
 	}
 
 	 
+	void death() 
+	{
+		
+		playerHealth -= 10;
+
+		if (playerHealth <= 0) 
+		{
+			app.close();
+		}
+	}
 
 
 };
