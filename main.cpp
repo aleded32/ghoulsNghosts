@@ -3,6 +3,7 @@
 #include <SFML/System.hpp>
 #include "player.h"
 
+
 using namespace std;
 using namespace sf;
 
@@ -64,10 +65,7 @@ int main()
 
 	Texture tile[3] = { empty, floorText, wallT};
 
-	Vector2f velocity = Vector2f(0, 0.1f);
-	const Vector2f accelaration = Vector2f(0, 0.12f);
-	const Vector2f accelarationJump = Vector2f(0, 4.0f);
-	bool isJumping;
+	
 	
 	Player player;
 
@@ -93,7 +91,8 @@ int main()
 
 	
 	
-
+	Thread t1(&Player::PlayerView, &player);
+	//Thread t2(&Player::jump, &player); put enemy class function in a different thread
 
 	Sprite empty;
 	empty.setColor(Color::Transparent);
@@ -138,56 +137,42 @@ int main()
 			if (e.type == Event::Closed) 
 			{
 				
+				t1.wait();
 				app.close();
 			}
 			
 		}
 
-		if (Keyboard::isKeyPressed(Keyboard::D) /*&& wall == false*/)
-		{
-
-			player.x  = player.x + 2;
-		player.player.setPosition(player.x, player.y);
-			
-
-		}
-		else if (Keyboard::isKeyPressed(Keyboard::A))
-		{
-
-			player.x = player.x - 2;
+			player.move();
 			player.player.setPosition(player.x, player.y);
 
+			//launching viewport of player on a different thread
+			t1.launch();
+
+		int playerX = int(player.x / 32);
+		int playerY = int(player.y / 32);
+
+		//collision for player		
+		if (gamefield[playerY+1][playerX] == 1) 
+		{
+			velocity.y = NULL;
+			velocity.x = 0;
+			isJumping = false;
+
 		}
+		else if (gamefield[playerY][playerX] == 0)
+		{
+			velocity.x = velocity.x + gravity.x;
+			velocity.y = velocity.y + gravity.y;
 
-		
-			if (player.player.getPosition().y >= 220 && Keyboard::isKeyPressed(Keyboard::Space) && isJumping == false) 
-			{
-				isJumping = true;
-				velocity.x = velocity.x - accelarationJump.x;
-				velocity.y = velocity.y - accelarationJump.y;
+			player.x += velocity.x;
+			 player.y += velocity.y;
+		}
+		if (gamefield[playerY][playerX + 1] == 2)
+		{
 
-				player.x += velocity.x;
-				player.y += velocity.y;
-			}
-			else if (player.player.getPosition().y <= 220)
-			{
-				velocity.x = velocity.x + accelaration.x;
-				velocity.y = velocity.y + accelaration.y;
-
-				player.x += velocity.x;
-				player.y += velocity.y;
-			}
-
-		
-			
-			
-
-		
-
-
-		
-
-		player.player.setPosition(player.x, player.y);
+			player.x = 0;
+		}
 
 		app.clear();
 		
@@ -198,44 +183,9 @@ int main()
 		
 		
 
-			int playerX = int(player.x / 32);
-			int playerY = int(player.y / 32);
-		
-		
-			Thread t1(&Player::PlayerView, &player);
-			t1.launch();			
+			
 		
 			
-
-		
-		if (gamefield[playerY+1][playerX] == 1) 
-		{
-			
-			velocity.y = NULL;
-			velocity.x = 0;
-			isJumping = false;
-			
-			
-			//cout << "collision";
-		}
-		else if (gamefield[playerY][playerX] == 0)
-		{
-			velocity.x = velocity.x + accelaration.x;
-			velocity.y = velocity.y + accelaration.y;
-
-			player.x += velocity.x;
-			 player.y += velocity.y;
-		}
-		if (gamefield[playerY][playerX + 1] == 2)
-		{
-
-			player.x = 0;
-			
-			//isJumping = false;
-
-
-			//cout << "collision";
-		}
 		
 		
 		for (int i = 0; i < 9; i++)
