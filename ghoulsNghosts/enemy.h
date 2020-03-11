@@ -27,12 +27,12 @@ public:
 		y = 7 * 33;
 		 
 
-		
+		enemyHealth = 20;
 
 		enemyTile.loadFromFile("snake.png");
 		Enemy.setTexture(enemyTile);
 		Enemy.setPosition(x, y);
-		Enemy.setScale(1, 1);
+		
 
 	}
 

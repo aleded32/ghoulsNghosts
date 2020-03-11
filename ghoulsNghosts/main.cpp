@@ -3,6 +3,7 @@
 #include <SFML/System.hpp>
 #include "player.h"
 #include "enemy.h"
+#include "item.h"
 
 
 using namespace std;
@@ -146,9 +147,8 @@ int main()
 			}
 			
 		}
-
-			player.move();
-			player.player.setPosition(player.x, player.y);
+			
+			
 
 			//launching viewport of player on a different thread
 			t1.launch();
@@ -186,7 +186,7 @@ int main()
 			player.death();
 		}
 
-		cout << player.playerHealth << endl;    
+		//cout << player.playerHealth << endl;    
 
 		app.clear();
 		
@@ -194,9 +194,10 @@ int main()
 		app.draw(chest);
 		
 		
+		player.attack();
+		player.move();
+		player.player.setPosition(player.x, player.y);
 		
-		
-
 			
 		
 			
