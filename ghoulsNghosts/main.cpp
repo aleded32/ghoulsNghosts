@@ -52,6 +52,7 @@ void spawn(Sprite floor, Sprite empty, Sprite wall, Texture tile[3],  int tileX,
 
 int main()
 {
+	Clock clock;
 	app.setFramerateLimit(60);
 	
 	
@@ -187,6 +188,8 @@ int main()
 		}
 
 		//cout << player.playerHealth << endl;    
+		shuriken Shuriken;
+
 
 		app.clear();
 		
@@ -218,6 +221,7 @@ int main()
 
 		app.draw(Snake.Enemy);
 		app.draw(player.player);
+		
 		//Gravity(velocity, accelaration, x, y, player);
 		app.display();
 	}

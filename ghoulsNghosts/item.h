@@ -48,6 +48,7 @@ class shuriken : public item
 
 	shuriken()
 	{
+		
 		dmg = 50;
 		itemShuriken.loadFromFile("itemDagger.png");
 		Shuriken.setTexture(itemShuriken);

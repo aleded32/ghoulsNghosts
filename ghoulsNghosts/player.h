@@ -7,6 +7,8 @@ using namespace sf;
 
 	RenderWindow app(VideoMode(700, 285), "snakesNtigers");
 	Event e;
+	
+
 
 	Vector2f velocity = Vector2f(0, 0.1f);
 	const Vector2f gravity = Vector2f(0, 0.12f);
@@ -33,13 +35,14 @@ class Player
 public:
 
 	Texture playerText;
-	
 	float x;
 	float y;
 	Sprite player;
 	int playerHealth;
 	View playerView;
 	bool facingleft;
+	
+	
 	
 
 	Player()
@@ -129,68 +132,72 @@ public:
 	
 	void attack()
 	{
-		
+		int itemSelected = 1;
+
+		dagger Dagger;
+		shuriken Shuriken;
+
 
 		if (e.type == Event::KeyReleased)
-		{
-			dagger Dagger;
-			shuriken Shuriken;
-
-			int itemSelected = 1;
-			
-
-			if(e.key.code == Keyboard::Up && !facingleft)
-			{
-				if(itemSelected == 0)
+		{	
+			if(itemSelected == 0)
 				{
-				Dagger.x = x + 10;
-				Dagger.y = y;
-
-				Dagger.Dagger.setPosition(Dagger.x, Dagger.y);
-
-				app.draw(Dagger.Dagger);
-				}
+					if(e.key.code == Keyboard::Up && !facingleft)
+					{
 				
-			}
-			else if(e.key.code == Keyboard::Up && facingleft)
-			{
-				if(itemSelected == 0)
-				{
-				Dagger.Dagger.setScale(-1,1);
-				Dagger.x = x - 10;
-				Dagger.y = y;
+						Dagger.x = x + 10;
+						Dagger.y = y;
 
-				Dagger.Dagger.setPosition(Dagger.x, Dagger.y);
+						Dagger.Dagger.setPosition(Dagger.x, Dagger.y);
 
-				app.draw(Dagger.Dagger);
+						app.draw(Dagger.Dagger);
+				
+				
+					}
+					else if(e.key.code == Keyboard::Up && facingleft)
+					{
+				
+						Dagger.Dagger.setScale(-1,1);
+						Dagger.x = x - 10;
+						Dagger.y = y;
+
+						Dagger.Dagger.setPosition(Dagger.x, Dagger.y);
+
+						app.draw(Dagger.Dagger);
+					}
+
 				}
-
-			}
 		}
 		if (e.type == Event::KeyPressed)
 		{
-			dagger Dagger;
-			shuriken Shuriken;
+			if(itemSelected == 1)
+			{
+				Shuriken.x = x;
+				Shuriken.y = y;
 
-			int itemSelected = 1;
 			
 
-			if(e.key.code == Keyboard::Up && !facingleft)
-			{
-				if(itemSelected == 1)
+				if(e.key.code == Keyboard::Up && !facingleft)
 				{
-				
+						Shuriken.x += 10;
+						//Shuriken.y += 10;
+						Shuriken.Shuriken.setPosition(Shuriken.x, Shuriken.y);
+						cout << Shuriken.x << endl;
+						cout << x << endl;
 				}
-				
-			}
-			else if(e.key.code == Keyboard::Up && facingleft)
-			{
-				if(itemSelected == 1)
+				else if(e.key.code == Keyboard::Up && facingleft)
 				{
-				
-				}
+						Shuriken.Shuriken.setScale(-1,1);
+						Shuriken.x -= 10;
+						
 
+						Shuriken.Shuriken.setPosition(Shuriken.x, Shuriken.y);
+
+						app.draw(Shuriken.Shuriken);
+				}
 			}
+			app.draw(Shuriken.Shuriken);
+			
 		}
 
 		
