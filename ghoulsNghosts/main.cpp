@@ -135,7 +135,7 @@ int main()
 
 	while (app.isOpen()) 
 	{
-		Event e;
+		
 		while (app.pollEvent(e)) 
 		{
 			if (e.type == Event::Closed) 

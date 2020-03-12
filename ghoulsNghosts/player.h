@@ -6,7 +6,7 @@ using namespace std;
 using namespace sf;
 
 	RenderWindow app(VideoMode(700, 285), "snakesNtigers");
-	
+	Event e;
 
 	Vector2f velocity = Vector2f(0, 0.1f);
 	const Vector2f gravity = Vector2f(0, 0.12f);
@@ -131,32 +131,69 @@ public:
 	{
 		
 
-		if (Keyboard::isKeyPressed(Keyboard::Up) && !facingleft)
+		if (e.type == Event::KeyReleased)
 		{
 			dagger Dagger;
-			
-			
-			Dagger.x = x + 10;
-			Dagger.y = y;
+			shuriken Shuriken;
 
-			Dagger.Dagger.setPosition(Dagger.x, Dagger.y);
-
-			app.draw(Dagger.Dagger);
+			int itemSelected = 1;
 			
+
+			if(e.key.code == Keyboard::Up && !facingleft)
+			{
+				if(itemSelected == 0)
+				{
+				Dagger.x = x + 10;
+				Dagger.y = y;
+
+				Dagger.Dagger.setPosition(Dagger.x, Dagger.y);
+
+				app.draw(Dagger.Dagger);
+				}
+				
+			}
+			else if(e.key.code == Keyboard::Up && facingleft)
+			{
+				if(itemSelected == 0)
+				{
+				Dagger.Dagger.setScale(-1,1);
+				Dagger.x = x - 10;
+				Dagger.y = y;
+
+				Dagger.Dagger.setPosition(Dagger.x, Dagger.y);
+
+				app.draw(Dagger.Dagger);
+				}
+
+			}
 		}
-		else if (Keyboard::isKeyPressed(Keyboard::Up) && facingleft)
+		if (e.type == Event::KeyPressed)
 		{
 			dagger Dagger;
-			
-			Dagger.Dagger.setScale(-1,1);
-			Dagger.x = x - 10;
-			Dagger.y = y;
+			shuriken Shuriken;
 
-			Dagger.Dagger.setPosition(Dagger.x, Dagger.y);
-
-			app.draw(Dagger.Dagger);
+			int itemSelected = 1;
 			
+
+			if(e.key.code == Keyboard::Up && !facingleft)
+			{
+				if(itemSelected == 1)
+				{
+				
+				}
+				
+			}
+			else if(e.key.code == Keyboard::Up && facingleft)
+			{
+				if(itemSelected == 1)
+				{
+				
+				}
+
+			}
 		}
+
+		
 	}
 	 
 	void death() 

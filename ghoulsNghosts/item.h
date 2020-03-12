@@ -34,6 +34,27 @@ public:
 		
 	}
 
-	//~dagger();
+	~dagger(){}
+
+};
+
+class shuriken : public item
+{
+
+	public:
+
+	Texture itemShuriken;
+	Sprite Shuriken;
+
+	shuriken()
+	{
+		dmg = 50;
+		itemShuriken.loadFromFile("itemDagger.png");
+		Shuriken.setTexture(itemShuriken);
+
+	}
+
+	~shuriken(){}
+
 
 };
