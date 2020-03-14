@@ -45,12 +45,14 @@ class shuriken : public item
 
 	Texture itemShuriken;
 	Sprite Shuriken;
+	Vector2f ShurikenSpeed;
+	float MaxRangeX;
 
 	shuriken()
 	{
 		
 		dmg = 50;
-		itemShuriken.loadFromFile("itemDagger.png");
+		itemShuriken.loadFromFile("boomerang.png");
 		Shuriken.setTexture(itemShuriken);
 
 	}

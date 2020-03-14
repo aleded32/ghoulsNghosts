@@ -126,23 +126,27 @@ public:
 				x += velocity.x;
 				y += velocity.y;
 			}
+		
 	}
 
 	
 	
-	void attack()
+	void attack(Clock& clock)
 	{
 		int itemSelected = 1;
+		float dt = clock.getElapsedTime().asSeconds();
 
 		dagger Dagger;
 		shuriken Shuriken;
 
+			Shuriken.x = x;
+			Shuriken.y = y;
+			Shuriken.ShurikenSpeed = Vector2f(300.0f,0);
 
-		if (e.type == Event::KeyReleased)
-		{	
-			if(itemSelected == 0)
+		
+				if(itemSelected == 0)
 				{
-					if(e.key.code == Keyboard::Up && !facingleft)
+					if(Keyboard::isKeyPressed(Keyboard::L) && !facingleft && !Keyboard::isKeyPressed(Keyboard::D))
 					{
 				
 						Dagger.x = x + 10;
@@ -154,7 +158,7 @@ public:
 				
 				
 					}
-					else if(e.key.code == Keyboard::Up && facingleft)
+					else if(Keyboard::isKeyPressed(Keyboard::L) && facingleft && !Keyboard::isKeyPressed(Keyboard::A))
 					{
 				
 						Dagger.Dagger.setScale(-1,1);
@@ -167,41 +171,41 @@ public:
 					}
 
 				}
-		}
-		if (e.type == Event::KeyPressed)
-		{
-			if(itemSelected == 1)
-			{
-				Shuriken.x = x;
-				Shuriken.y = y;
-
-			
-
-				if(e.key.code == Keyboard::Up && !facingleft)
+				else if(itemSelected == 1)
 				{
-						Shuriken.x += 10;
-						//Shuriken.y += 10;
-						Shuriken.Shuriken.setPosition(Shuriken.x, Shuriken.y);
-						cout << Shuriken.x << endl;
-						cout << x << endl;
-				}
-				else if(e.key.code == Keyboard::Up && facingleft)
-				{
-						Shuriken.Shuriken.setScale(-1,1);
-						Shuriken.x -= 10;
-						
-
-						Shuriken.Shuriken.setPosition(Shuriken.x, Shuriken.y);
-
+					
+					if(Keyboard::isKeyPressed(Keyboard::L) && (!facingleft) && !Keyboard::isKeyPressed(Keyboard::D))
+					{
+						//fired = true;
+						Shuriken.x += (Shuriken.ShurikenSpeed.x * dt);
+						Shuriken.Shuriken.setPosition(Shuriken.x,Shuriken.y);
 						app.draw(Shuriken.Shuriken);
+						cout << dt << endl;
+					}
+					else if(Keyboard::isKeyPressed(Keyboard::L) && (facingleft) && !Keyboard::isKeyPressed(Keyboard::A))
+					{
+						//fired = true;
+						Shuriken.Shuriken.setScale(-1,1);
+						Shuriken.x -= (Shuriken.ShurikenSpeed.x * dt);
+						Shuriken.Shuriken.setPosition(Shuriken.x,Shuriken.y);
+						app.draw(Shuriken.Shuriken);
+						cout << dt << endl;
+					}
+				
+				
+					if(dt >= 0.3)
+					{
+
+						//fired = false;
+						clock.restart();
+					}
+
+					
+				
 				}
 			}
-			app.draw(Shuriken.Shuriken);
-			
-		}
+	
 
-		
-	}
 	 
 	void death() 
 	{

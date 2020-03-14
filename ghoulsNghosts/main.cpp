@@ -189,7 +189,7 @@ int main()
 
 		//cout << player.playerHealth << endl;    
 		shuriken Shuriken;
-
+		
 
 		app.clear();
 		
@@ -197,13 +197,12 @@ int main()
 		app.draw(chest);
 		
 		
-		player.attack();
+		
 		player.move();
 		player.player.setPosition(player.x, player.y);
+		player.attack(clock);
 		
-			
 		
-			
 		
 		
 		for (int i = 0; i < 9; i++)
@@ -221,6 +220,7 @@ int main()
 
 		app.draw(Snake.Enemy);
 		app.draw(player.player);
+		
 		
 		//Gravity(velocity, accelaration, x, y, player);
 		app.display();
