@@ -163,23 +163,18 @@ int main()
 		//collision for player		
 		if (gamefield[playerY+1][playerX] == 1) 
 		{
-			velocity.y = NULL;
-			velocity.x = 0;
+			velocityY.y = NULL;
 			isJumping = false;
+			
 
 		}
 		else if (gamefield[playerY][playerX] == 0)
 		{
-			velocity.x = velocity.x + gravity.x;
-			velocity.y = velocity.y + gravity.y;
+			
+			velocityY.y = velocityY.y + gravity.y;
 
-			player.x += velocity.x;
-			 player.y += velocity.y;
-		}
-		if (gamefield[playerY][playerX + 1] == 2)
-		{
-
-			player.x = 0;
+		
+			 player.y += velocityY.y;
 		}
 		if (snakeX == playerX && snakeY == playerY)
 		{
@@ -198,7 +193,7 @@ int main()
 		
 		
 		
-		player.move();
+		player.move(clock);
 		player.player.setPosition(player.x, player.y);
 		player.attack(clock);
 		

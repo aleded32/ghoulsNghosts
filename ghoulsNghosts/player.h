@@ -10,9 +10,10 @@ using namespace sf;
 	
 
 
-	Vector2f velocity = Vector2f(0, 0.1f);
+	Vector2f velocityY = Vector2f(0, 0.1f);
+	Vector2f velocityX = Vector2f(2.5f, 0.0f);
 	const Vector2f gravity = Vector2f(0, 0.12f);
-	const Vector2f accelarationJump = Vector2f(0, 4.0f);
+	const Vector2f accelarationJump = Vector2f(0, 4.5f);
 	bool isJumping;
 
 	int gamefield[9][22] = 
@@ -49,7 +50,7 @@ public:
 	{
 		
 		playerHealth = 300;
-		 x = 1*32;
+		 x = 2*32;
 		 y = 7*32;
 		 facingleft = false;
 		
@@ -85,14 +86,15 @@ public:
 		app.setView(playerView);
 	}
 
-	void move()
+	void move(Clock& clock)
 	{
 		
+		float dt = clock.getElapsedTime().asSeconds();
 
 		if (Keyboard::isKeyPressed(Keyboard::D) /*&& wall == false*/)
 		{
 			facingleft = false;
-			x  = x + 2;
+			x  = x + velocityX.x;
 			player.setScale(1,1);
 		player.setPosition(x, y);
 			//cout << facingleft << endl;
@@ -102,7 +104,7 @@ public:
 		{
 			
 			facingleft = true;
-			x = x - 2;
+			x = x - velocityX.x; 
 			player.setScale(-1,1);
 			player.setPosition(x, y);
 			//cout << facingleft << endl;
@@ -112,19 +114,15 @@ public:
 		if (player.getPosition().y >= 220 && Keyboard::isKeyPressed(Keyboard::Space) && isJumping == false) 
 			{
 				isJumping = true;
-				velocity.x = velocity.x - accelarationJump.x;
-				velocity.y = velocity.y - accelarationJump.y;
+				velocityY.y = velocityY.y - accelarationJump.y;
 
-				x += velocity.x;
-				y += velocity.y;
+				y += velocityY.y * dt;
 			}
 			else if (player.getPosition().y <= 220)
 			{
-				velocity.x = velocity.x + gravity.x;
-				velocity.y = velocity.y + gravity.y;
+				velocityY.y = velocityY.y + gravity.y;
 
-				x += velocity.x;
-				y += velocity.y;
+				y += velocityY.y * dt;
 			}
 		
 	}
