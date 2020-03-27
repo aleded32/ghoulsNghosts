@@ -2,12 +2,14 @@
 
 #include "item.h"
 
+
 using namespace std;
 using namespace sf;
 
 	RenderWindow app(VideoMode(700, 285), "snakesNtigers");
 	Event e;
 	
+	float dt;
 
 
 	Vector2f velocityY = Vector2f(0, 0.1f);
@@ -89,7 +91,7 @@ public:
 	void move(Clock& clock)
 	{
 		
-		float dt = clock.getElapsedTime().asSeconds();
+		 dt = clock.getElapsedTime().asSeconds();
 
 		if (Keyboard::isKeyPressed(Keyboard::D) /*&& wall == false*/)
 		{
@@ -124,15 +126,18 @@ public:
 
 				y += velocityY.y * dt;
 			}
+
+			
 		
 	}
 
 	
 	
-	void attack(Clock& clock)
+	void attack(Clock& clock, Sprite chest, Texture empty)
 	{
-		int itemSelected = 1;
-		float dt = clock.getElapsedTime().asSeconds();
+		
+		int itemSelected = 0;
+		dt = clock.getElapsedTime().asSeconds();
 
 		dagger Dagger;
 		shuriken Shuriken;
@@ -140,6 +145,20 @@ public:
 			Shuriken.x = x;
 			Shuriken.y = y;
 			Shuriken.ShurikenSpeed = Vector2f(300.0f,0);
+
+			if(x >= chest.getPosition().x)
+			{
+					
+						chest.setTexture(empty);
+						itemSelected = 1;
+					
+					
+			}
+			else
+			{
+				int itemSelected = 0;
+			}
+			
 
 		
 				if(itemSelected == 0)
@@ -163,13 +182,15 @@ public:
 						Dagger.x = x - 10;
 						Dagger.y = y;
 
+						
+
 						Dagger.Dagger.setPosition(Dagger.x, Dagger.y);
 
 						app.draw(Dagger.Dagger);
 					}
 
 				}
-				else if(itemSelected == 1)
+				if(itemSelected == 1)
 				{
 					
 					if(Keyboard::isKeyPressed(Keyboard::L) && (!facingleft) && !Keyboard::isKeyPressed(Keyboard::D))
@@ -178,7 +199,8 @@ public:
 						Shuriken.x += (Shuriken.ShurikenSpeed.x * dt);
 						Shuriken.Shuriken.setPosition(Shuriken.x,Shuriken.y);
 						app.draw(Shuriken.Shuriken);
-						cout << dt << endl;
+						
+
 					}
 					else if(Keyboard::isKeyPressed(Keyboard::L) && (facingleft) && !Keyboard::isKeyPressed(Keyboard::A))
 					{
@@ -187,22 +209,26 @@ public:
 						Shuriken.x -= (Shuriken.ShurikenSpeed.x * dt);
 						Shuriken.Shuriken.setPosition(Shuriken.x,Shuriken.y);
 						app.draw(Shuriken.Shuriken);
-						cout << dt << endl;
+						
 					}
 				
 				
-					if(dt >= 0.3)
-					{
-
-						//fired = false;
-						clock.restart();
-					}
+					
 
 					
 				
 				}
-			}
-	
+
+				if(dt >= 0.5)
+					{
+
+						
+						clock.restart();
+					}
+
+				
+			
+	}
 
 	 
 	void death() 

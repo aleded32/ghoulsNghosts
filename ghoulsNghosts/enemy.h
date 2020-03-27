@@ -10,6 +10,7 @@ public:
 	float x;
 	float y;
 	int enemyHealth;
+	Vector2f EnemySpeed;
 };
 
 class snake : public enemy
@@ -18,20 +19,20 @@ public:
 
 	Texture enemyTile;
 	Sprite Enemy;
+	
+
 
 	snake()
 	{
 
-
-		x = 7 * 32;
-		y = 7 * 33;
-		 
-
 		enemyHealth = 20;
-
+		
 		enemyTile.loadFromFile("snake.png");
 		Enemy.setTexture(enemyTile);
-		Enemy.setPosition(x, y);
+		
+		
+
+		
 		
 
 	}
@@ -43,7 +44,7 @@ public:
 
 	}
 
-	
+
 
 };
 

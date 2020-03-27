@@ -21,7 +21,10 @@ Texture backgroundText;
 Texture chestText;
 Texture wallT;
 
-
+snake snakes[4];
+Player player;
+shuriken Shuriken;
+dagger Dagger;
 
 
 
@@ -31,6 +34,9 @@ int tileY = 8;
 
 void spawn(Sprite floor, Sprite empty, Sprite wall, Texture tile[3],  int tileX, int tileY) 
 {
+
+	
+
 
 	floor.setTexture(tile[0]);
 	floor.setPosition(tileX * 32, tileY * 32);
@@ -47,6 +53,37 @@ void spawn(Sprite floor, Sprite empty, Sprite wall, Texture tile[3],  int tileX,
 
 
 
+void EnemySpawn(Clock& clock)
+{
+	
+	float Edt = clock.getElapsedTime().asSeconds();
+
+	for(int i = 1; i < 2; i++)
+		{
+			snakes[i].EnemySpeed = Vector2f(50, 0);
+
+			snakes[i].y = 7 * 33;
+			snakes[i].x = (i* 10) * 32;
+			
+
+			if(player.x >= snakes[i].x - 150  && player.x <= snakes[i].x)
+			{
+
+				snakes[i].x -=   6 * (snakes[i].EnemySpeed.x * dt);
+			} 
+			else if(player.x <= snakes[i].x + 150)
+			{
+
+				snakes[i].x +=   6 * (snakes[i].EnemySpeed.x * dt);
+			} 
+			 
+
+			snakes[i].Enemy.setPosition(snakes[i].x, snakes[i].y);
+			app.draw(snakes[i].Enemy);
+
+			
+		}
+}
 
 
 
@@ -71,9 +108,9 @@ int main()
 
 	
 	
-	Player player;
+	
 
-	snake Snake;
+	
 
 
 
@@ -98,8 +135,8 @@ int main()
 	
 	Thread t1(&Player::PlayerView, &player);
 
-	Sprite empty;
-	empty.setColor(Color::Transparent);
+	Sprite Empty;
+	Empty.setColor(Color::Transparent);
 
 
 	int gamefield[9][22] = 
@@ -157,8 +194,28 @@ int main()
 
 		int playerX = int(player.x / 32);
 		int playerY = int(player.y / 32);
-		int snakeX = int(Snake.x / 32);
-		int snakeY = int(Snake.y / 33);
+		int snakeX[4];
+		int snakeY[4];
+		int ShurikenX = int(Shuriken.x / 32);
+		int ShurikenY = int(Shuriken.y / 32);
+		int DaggerX = int(Dagger.x / 32);
+		int DaggerY = int(Dagger.y / 32);
+
+		for(int i = 1; i < 4; i++ )
+		{
+			snakeX[i] = int(snakes[i].x / 32);
+			snakeY[i] = int(snakes[i].y / 33);
+
+			if (snakeX[i] == playerX && snakeY[i] == playerY)
+			{
+
+			player.death();
+			}
+			
+			
+		}
+
+		
 
 		//collision for player		
 		if (gamefield[playerY+1][playerX] == 1) 
@@ -176,11 +233,7 @@ int main()
 		
 			 player.y += velocityY.y;
 		}
-		if (snakeX == playerX && snakeY == playerY)
-		{
-
-			player.death();
-		}
+		
 
 		//cout << player.playerHealth << endl;    
 		shuriken Shuriken;
@@ -195,7 +248,7 @@ int main()
 		
 		player.move(clock);
 		player.player.setPosition(player.x, player.y);
-		player.attack(clock);
+		player.attack(clock, chest, empty);
 		
 		
 		
@@ -206,14 +259,13 @@ int main()
 			{
 				
 				
-			spawn(floor ,empty,wall, &tile[gamefield[i][j]], j, i);
+			spawn(floor ,Empty,wall, &tile[gamefield[i][j]], j, i);
 				
 
 			}
 			
 		}
-
-		app.draw(Snake.Enemy);
+		EnemySpawn(clock);
 		app.draw(player.player);
 		
 		
