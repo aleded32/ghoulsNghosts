@@ -18,6 +18,7 @@ using namespace sf;
 	const Vector2f accelarationJump = Vector2f(0, 4.5f);
 	bool isJumping;
 
+
 	int gamefield[9][22] = 
 	{
 	 2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -32,6 +33,8 @@ using namespace sf;
 	 
 	};
 
+
+
 class Player
 {
 
@@ -44,13 +47,14 @@ public:
 	int playerHealth;
 	View playerView;
 	bool facingleft;
+	int EnemyDamage;
 	
 	
 	
 
 	Player()
 	{
-		
+		EnemyDamage = 10;
 		playerHealth = 300;
 		 x = 2*32;
 		 y = 7*32;
@@ -90,6 +94,7 @@ public:
 
 	void move(Clock& clock)
 	{
+
 		
 		 dt = clock.getElapsedTime().asSeconds();
 
@@ -133,7 +138,7 @@ public:
 
 	
 	
-	void attack(Clock& clock, Sprite chest, Texture empty)
+	void attack(Clock& clock, Sprite chest, Texture empty, int snakeX[2],int snakeY[2], int playerX, int playerY, void EnemyDeath ())
 	{
 		
 		int itemSelected = 0;
@@ -142,14 +147,14 @@ public:
 		dagger Dagger;
 		shuriken Shuriken;
 
-			Shuriken.x = x;
-			Shuriken.y = y;
+			
 			Shuriken.ShurikenSpeed = Vector2f(300.0f,0);
+			
 
 			if(x >= chest.getPosition().x)
 			{
 					
-						chest.setTexture(empty);
+						chest.setColor(Color::Transparent);
 						itemSelected = 1;
 					
 					
@@ -196,6 +201,8 @@ public:
 					if(Keyboard::isKeyPressed(Keyboard::L) && (!facingleft) && !Keyboard::isKeyPressed(Keyboard::D))
 					{
 						//fired = true;
+						Shuriken.x = x;
+						Shuriken.y = y;
 						Shuriken.x += (Shuriken.ShurikenSpeed.x * dt);
 						Shuriken.Shuriken.setPosition(Shuriken.x,Shuriken.y);
 						app.draw(Shuriken.Shuriken);
@@ -205,6 +212,8 @@ public:
 					else if(Keyboard::isKeyPressed(Keyboard::L) && (facingleft) && !Keyboard::isKeyPressed(Keyboard::A))
 					{
 						//fired = true;
+						Shuriken.x = x;
+						Shuriken.y = y;
 						Shuriken.Shuriken.setScale(-1,1);
 						Shuriken.x -= (Shuriken.ShurikenSpeed.x * dt);
 						Shuriken.Shuriken.setPosition(Shuriken.x,Shuriken.y);
@@ -212,29 +221,58 @@ public:
 						
 					}
 				
-				
-					
-
-					
-				
 				}
 
 				if(dt >= 0.5)
 					{
-
-						
 						clock.restart();
 					}
 
+				int ShurikenX = (int)Shuriken.x/32;
+				int ShurikenY = (int)Shuriken.y/32;
+				int daggerX = (int)Dagger.x/32;
+				int daggerY = (int)Dagger.y/32;
+
+				for(int i = 1; i < 2; i++ )
+				{
+					
+					
+
+					if (snakeX[i] == playerX && snakeY[i] == playerY)
+					{
+
+						death();
+					}
+			
+					if(snakeX[i] == ShurikenX && snakeY[i] == ShurikenY)
+					{
+					 
+						EnemyDeath();
+						EnemyDamage = 0;
+						
+					}
+					else if(snakeX[i] == daggerX && snakeY[i] == daggerY)
+					{
+					 
+						EnemyDeath();
+						EnemyDamage = 0;
+						
+					}
+					
+					
+			
+				}
+
+			
 				
 			
-	}
+		}
 
 	 
 	void death() 
 	{
 		
-		playerHealth -= 10;
+		playerHealth -= EnemyDamage;
 
 		if (playerHealth <= 0) 
 		{

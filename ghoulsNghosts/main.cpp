@@ -40,15 +40,24 @@ void spawn(Sprite floor, Sprite empty, Sprite wall, Texture tile[3],  int tileX,
 
 	floor.setTexture(tile[0]);
 	floor.setPosition(tileX * 32, tileY * 32);
-	empty.setTexture(tile[1]);
-	empty.setPosition(tileX * 32, tileY * 32);
-	wall.setTexture(tile[2]);
-	wall.setPosition(tileX * 32, tileY * 32);
 
-	app.draw(wall);
+
+
+
 	app.draw(floor);
-	app.draw(empty);
+	
 
+}
+
+void EnemyDeath()
+{
+	for (int i = 1; i < 2; i++)
+	{
+		
+		snakes[i].Enemy.setColor(Color::Transparent);
+		
+
+	}
 }
 
 
@@ -56,26 +65,22 @@ void spawn(Sprite floor, Sprite empty, Sprite wall, Texture tile[3],  int tileX,
 void EnemySpawn(Clock& clock)
 {
 	
-	float Edt = clock.getElapsedTime().asSeconds();
+
 
 	for(int i = 1; i < 2; i++)
 		{
-			snakes[i].EnemySpeed = Vector2f(50, 0);
+			snakes[i].EnemySpeed = Vector2f(20, 0);
 
 			snakes[i].y = 7 * 33;
-			snakes[i].x = (i* 10) * 32;
+			snakes[i].x = (i*6) * 32;
 			
 
-			if(player.x >= snakes[i].x - 150  && player.x <= snakes[i].x)
+			if(player.x >= snakes[i].x - 100  && player.x <= snakes[i].x)
 			{
 
 				snakes[i].x -=   6 * (snakes[i].EnemySpeed.x * dt);
 			} 
-			else if(player.x <= snakes[i].x + 150)
-			{
-
-				snakes[i].x +=   6 * (snakes[i].EnemySpeed.x * dt);
-			} 
+			
 			 
 
 			snakes[i].Enemy.setPosition(snakes[i].x, snakes[i].y);
@@ -106,13 +111,6 @@ int main()
 
 	Texture tile[3] = { empty, floorText, wallT};
 
-	
-	
-	
-
-	
-
-
 
 	
 
@@ -127,7 +125,7 @@ int main()
 	Sprite chest;
 	chestText.loadFromFile("chest.png");
 	chest.setTexture(chestText);
-	chest.setPosition(18 * 32, 7 * 32);
+	chest.setPosition(10 * 32, 7 * 32);
 
 
 
@@ -139,20 +137,7 @@ int main()
 	Empty.setColor(Color::Transparent);
 
 
-	int gamefield[9][22] = 
-	{
-	 2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-	 2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-	 2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-	 2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-	 2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-	 2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-	 2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-	 2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-	 1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1
-	 
-	};
-
+	
 
 	//initallizes gamefield
 	for(int i = 0; i < 9; i++)
@@ -186,7 +171,6 @@ int main()
 			
 		}
 			
-			
 
 			//launching viewport of player on a different thread
 			t1.launch();
@@ -194,28 +178,15 @@ int main()
 
 		int playerX = int(player.x / 32);
 		int playerY = int(player.y / 32);
-		int snakeX[4];
-		int snakeY[4];
+		
 		int ShurikenX = int(Shuriken.x / 32);
 		int ShurikenY = int(Shuriken.y / 32);
 		int DaggerX = int(Dagger.x / 32);
 		int DaggerY = int(Dagger.y / 32);
 
-		for(int i = 1; i < 4; i++ )
-		{
-			snakeX[i] = int(snakes[i].x / 32);
-			snakeY[i] = int(snakes[i].y / 33);
-
-			if (snakeX[i] == playerX && snakeY[i] == playerY)
-			{
-
-			player.death();
-			}
-			
-			
-		}
-
 		
+
+		cout << int(Shuriken.x / 32) << endl;
 
 		//collision for player		
 		if (gamefield[playerY+1][playerX] == 1) 
@@ -248,9 +219,20 @@ int main()
 		
 		player.move(clock);
 		player.player.setPosition(player.x, player.y);
-		player.attack(clock, chest, empty);
+
+		for(int i = 1; i < 2; i++)
+		{
+			int snakeX[3];
+			int snakeY[3];
+
+			snakeX[i] = int(snakes[i].x / 32);
+			snakeY[i] = int(snakes[i].y / 32);
+
+			player.attack(clock, chest, empty, snakeX, snakeY, playerX, playerY, EnemyDeath);
+		}
+
 		
-		
+				
 		
 		
 		for (int i = 0; i < 9; i++)
