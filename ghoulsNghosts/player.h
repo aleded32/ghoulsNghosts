@@ -17,7 +17,9 @@ using namespace sf;
 	const Vector2f gravity = Vector2f(0, 0.12f);
 	const Vector2f accelarationJump = Vector2f(0, 4.5f);
 	bool isJumping;
-
+	bool iscollidedRight = false;
+	bool iscollidedLeft = false;
+	bool facingleft = false; 
 
 	int gamefield[9][22] = 
 	{
@@ -46,7 +48,7 @@ public:
 	Sprite player;
 	int playerHealth;
 	View playerView;
-	bool facingleft;
+	
 	int EnemyDamage;
 	
 	
@@ -58,11 +60,10 @@ public:
 		playerHealth = 300;
 		 x = 2*32;
 		 y = 7*32;
-		 facingleft = false;
 		
 		
-	playerText.loadFromFile("player.png");
-	player.setTexture(playerText);
+		playerText.loadFromFile("player.png");
+		player.setTexture(playerText);
 		player.setPosition(x, y);
 
 	}
@@ -92,13 +93,13 @@ public:
 		app.setView(playerView);
 	}
 
-	void move(Clock& clock)
+	void move()
 	{
 
 		
-		 dt = clock.getElapsedTime().asSeconds();
+		 
 
-		if (Keyboard::isKeyPressed(Keyboard::D) /*&& wall == false*/)
+		if (Keyboard::isKeyPressed(Keyboard::D)  && !iscollidedLeft/*&& wall == false*/)
 		{
 			facingleft = false;
 			x  = x + velocityX.x;
@@ -107,7 +108,7 @@ public:
 			//cout << facingleft << endl;
 
 		}
-		else if (Keyboard::isKeyPressed(Keyboard::A))
+		else if (Keyboard::isKeyPressed(Keyboard::A) && !iscollidedRight)
 		{
 			
 			facingleft = true;
@@ -123,13 +124,13 @@ public:
 				isJumping = true;
 				velocityY.y = velocityY.y - accelarationJump.y;
 
-				y += velocityY.y * dt;
+				y += velocityY.y * 0.5;
 			}
 			else if (player.getPosition().y <= 220)
 			{
 				velocityY.y = velocityY.y + gravity.y;
 
-				y += velocityY.y * dt;
+				y += velocityY.y * 0.5;
 			}
 
 			
@@ -138,7 +139,7 @@ public:
 
 	
 	
-	void attack(Clock& clock, Sprite chest, Texture empty, int snakeX[2],int snakeY[2], int playerX, int playerY, void EnemyDeath ())
+	void attack(Clock& clock, Sprite chest, Texture empty, int snakeX[2],int snakeY[2], int playerX, int playerY, void EnemyDeath1 (), void EnemyDeath2())
 	{
 		
 		int itemSelected = 0;
@@ -233,35 +234,47 @@ public:
 				int daggerX = (int)Dagger.x/32;
 				int daggerY = (int)Dagger.y/32;
 
-				for(int i = 1; i < 2; i++ )
+				for(int i = 1; i < 3; i++ )
 				{
-					
-					
-
+	
 					if (snakeX[i] == playerX && snakeY[i] == playerY)
 					{
 
 						death();
 					}
-			
-					if(snakeX[i] == ShurikenX && snakeY[i] == ShurikenY)
-					{
-					 
-						EnemyDeath();
-						EnemyDamage = 0;
-						
-					}
-					else if(snakeX[i] == daggerX && snakeY[i] == daggerY)
-					{
-					 
-						EnemyDeath();
-						EnemyDamage = 0;
-						
-					}
-					
-					
-			
 				}
+			
+					if(snakeX[1] == ShurikenX && snakeY[1] == ShurikenY)
+					{
+					 
+						EnemyDeath1();
+						EnemyDamage = 0;
+						
+					}
+					else if(snakeX[1] == daggerX - 10 && snakeY[1] == daggerY)
+					{
+					 
+						EnemyDeath1();
+						EnemyDamage = 0;
+						
+					}
+					else if(snakeX[2] == ShurikenX && snakeY[2] == ShurikenY)
+					{
+					 
+						EnemyDeath2();
+						EnemyDamage = 0;
+						
+					}
+					else if(snakeX[2] == daggerX && snakeY[2] == daggerY)
+					{
+					 
+						EnemyDeath2();
+						EnemyDamage = 0;
+						
+					}
+					
+			
+				
 
 			
 				
@@ -279,6 +292,7 @@ public:
 			app.close();
 		}
 	}
+	
 
 
 };

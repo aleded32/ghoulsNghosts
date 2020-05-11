@@ -6,6 +6,7 @@
 #include "item.h"
 
 
+
 using namespace std;
 using namespace sf;
 
@@ -16,6 +17,7 @@ using namespace sf;
 Texture floorText;
 Texture empty;
 Texture backgroundText;
+Texture blockText;
 
 
 Texture chestText;
@@ -31,6 +33,7 @@ dagger Dagger;
 
 int tileX = 1;
 int tileY = 8;
+
 
 void spawn(Sprite floor, Sprite empty, Sprite wall, Texture tile[3],  int tileX, int tileY) 
 {
@@ -49,15 +52,52 @@ void spawn(Sprite floor, Sprite empty, Sprite wall, Texture tile[3],  int tileX,
 
 }
 
-void EnemyDeath()
+void collision(int playerLocationX, int playerLocationY, int blockLocationX, int blockLocationY, Sprite block, int blockX, int blockY, int playerX, int playerY)
 {
-	for (int i = 1; i < 2; i++)
+	if(playerLocationX == blockLocationX && isJumping == false && facingleft == false)
 	{
+		iscollidedLeft = true;
+
+		player.player.setPosition(playerLocationX - block.getGlobalBounds().width/2 - 2, playerLocationY);
 		
-		snakes[i].Enemy.setColor(Color::Transparent);
+	}
+	
+	else if(playerLocationX == blockLocationX && isJumping == false && facingleft == true)
+	{
+		iscollidedRight = true;
+
+		player.player.setPosition(playerLocationX + 50, playerLocationY);
+		
+	}
+	else if (playerLocationX != blockLocationX)
+	{
+		iscollidedRight = false;
+		iscollidedLeft = false;
+	
+	}
+	
+
+}
+
+
+void EnemyDeath1()
+{
+	
+		
+		snakes[1].Enemy.setColor(Color::Transparent);
 		
 
-	}
+	
+}
+
+void EnemyDeath2()
+{
+	
+		
+		snakes[2].Enemy.setColor(Color::Transparent);
+		
+
+	
 }
 
 
@@ -67,7 +107,7 @@ void EnemySpawn(Clock& clock)
 	
 
 
-	for(int i = 1; i < 2; i++)
+	for(int i = 1; i < 3; i++)
 		{
 			snakes[i].EnemySpeed = Vector2f(20, 0);
 
@@ -103,6 +143,7 @@ int main()
 	Sprite wall;
 	wall.setColor(Color::Transparent);
 	floorText.loadFromFile("floor.png");
+	blockText.loadFromFile("wall.png");
 	
 	
 	
@@ -127,7 +168,11 @@ int main()
 	chest.setTexture(chestText);
 	chest.setPosition(10 * 32, 7 * 32);
 
+	Sprite block;
+	block.setTexture(blockText);
+	
 
+	
 
 	
 	
@@ -158,7 +203,7 @@ int main()
 
 	while (app.isOpen()) 
 	{
-		
+
 		while (app.pollEvent(e)) 
 		{
 			if (e.type == Event::Closed) 
@@ -171,14 +216,13 @@ int main()
 			
 		}
 			
-
+			
 			//launching viewport of player on a different thread
 			t1.launch();
 			
 
 		int playerX = int(player.x / 32);
 		int playerY = int(player.y / 32);
-		
 		int ShurikenX = int(Shuriken.x / 32);
 		int ShurikenY = int(Shuriken.y / 32);
 		int DaggerX = int(Dagger.x / 32);
@@ -186,7 +230,6 @@ int main()
 
 		
 
-		cout << int(Shuriken.x / 32) << endl;
 
 		//collision for player		
 		if (gamefield[playerY+1][playerX] == 1) 
@@ -214,13 +257,14 @@ int main()
 		
 		app.draw(background);
 		app.draw(chest);
+		app.draw(block);
 		
 		
+			player.move();
 		
-		player.move(clock);
 		player.player.setPosition(player.x, player.y);
 
-		for(int i = 1; i < 2; i++)
+		for(int i = 1; i < 3; i++)
 		{
 			int snakeX[3];
 			int snakeY[3];
@@ -228,11 +272,11 @@ int main()
 			snakeX[i] = int(snakes[i].x / 32);
 			snakeY[i] = int(snakes[i].y / 32);
 
-			player.attack(clock, chest, empty, snakeX, snakeY, playerX, playerY, EnemyDeath);
+			player.attack(clock, chest, empty, snakeX, snakeY, playerX, playerY, EnemyDeath1, EnemyDeath2);
 		}
 
 		
-				
+			//cout << iscollided << endl;	
 		
 		
 		for (int i = 0; i < 9; i++)
@@ -248,7 +292,20 @@ int main()
 			
 		}
 		EnemySpawn(clock);
+
+		for(int i = 1; i < 2; i++)
+	{
+	 int blockLocationX = 3 * 32;
+	 int blockLocationY = 7 * 32;
+	 int blockX = blockLocationX/32;
+	 int blockY = blockLocationY/32;
+	 block.setPosition( blockLocationX * i, blockLocationY);
+	
+		collision(player.x, player.y, blockLocationX, blockLocationY, block, blockX, blockY, playerX, playerY);
+	}
+
 		app.draw(player.player);
+		
 		
 		
 		//Gravity(velocity, accelaration, x, y, player);
