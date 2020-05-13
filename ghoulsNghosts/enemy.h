@@ -48,3 +48,22 @@ public:
 
 };
 
+class bird : public enemy
+{
+
+	public:
+
+		Texture enemyTile;
+		Sprite  Bird;
+
+		bird()
+		{
+			enemyTile.loadFromFile("bird.png");
+			Bird.setTexture(enemyTile);
+			enemyHealth = 10;
+		}
+
+		~bird(){}
+
+};
+

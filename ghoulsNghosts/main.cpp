@@ -24,6 +24,7 @@ Texture chestText;
 Texture wallT;
 
 snake snakes[4];
+bird  birds[3];
 Player player;
 shuriken Shuriken;
 dagger Dagger;
@@ -52,32 +53,7 @@ void spawn(Sprite floor, Sprite empty, Sprite wall, Texture tile[3],  int tileX,
 
 }
 
-void collision(int playerLocationX, int playerLocationY, int blockLocationX, int blockLocationY, Sprite block, int blockX, int blockY, int playerX, int playerY)
-{
-	if(playerLocationX == blockLocationX && isJumping == false && facingleft == false)
-	{
-		iscollidedLeft = true;
 
-		player.player.setPosition(playerLocationX - block.getGlobalBounds().width/2 - 2, playerLocationY);
-		
-	}
-	
-	else if(playerLocationX == blockLocationX && isJumping == false && facingleft == true)
-	{
-		iscollidedRight = true;
-
-		player.player.setPosition(playerLocationX + 50, playerLocationY);
-		
-	}
-	else if (playerLocationX != blockLocationX)
-	{
-		iscollidedRight = false;
-		iscollidedLeft = false;
-	
-	}
-	
-
-}
 
 
 void EnemyDeath1()
@@ -100,19 +76,45 @@ void EnemyDeath2()
 	
 }
 
+void EnemyDeath3()
+{
+	
+		
+		birds[1].Bird.setColor(Color::Transparent);
+		
+
+	
+}
+
+void EnemyDeath4()
+{
+	
+		
+		birds[2].Bird.setColor(Color::Transparent);
+		
+
+	
+}
+
 
 
 void EnemySpawn(Clock& clock)
 {
 	
-
+	float frequency = 5.0f;
+	float amplitude = 70.0f;
+	int distance = 80;
 
 	for(int i = 1; i < 3; i++)
 		{
-			snakes[i].EnemySpeed = Vector2f(20, 0);
+			snakes[i].EnemySpeed = Vector2f(10, 0);
 
 			snakes[i].y = 7 * 33;
 			snakes[i].x = (i*6) * 32;
+
+			birds[i].Bird.setScale(-1,1);
+			birds[i].y = 5 * 32;
+			birds[i].x = (i*7) * 32;
 			
 
 			if(player.x >= snakes[i].x - 100  && player.x <= snakes[i].x)
@@ -121,10 +123,16 @@ void EnemySpawn(Clock& clock)
 				snakes[i].x -=   6 * (snakes[i].EnemySpeed.x * dt);
 			} 
 			
-			 
+			
+			birds[i].x += distance *(-2 * dt);
+			birds[i].y += (sin(frequency * dt) * amplitude);
+			
 
+			birds[i].Bird.setPosition(birds[i].x, birds[i].y);
 			snakes[i].Enemy.setPosition(snakes[i].x, snakes[i].y);
+			app.draw(birds[i].Bird);
 			app.draw(snakes[i].Enemy);
+
 
 			
 		}
@@ -268,15 +276,21 @@ int main()
 		{
 			int snakeX[3];
 			int snakeY[3];
+			int birdX[3];
+			int birdY[3];
 
 			snakeX[i] = int(snakes[i].x / 32);
 			snakeY[i] = int(snakes[i].y / 32);
+			birdX[i] = int(birds[i].x / 32);
+			birdY[i] = int(birds[i].y / 32);
 
-			player.attack(clock, chest, empty, snakeX, snakeY, playerX, playerY, EnemyDeath1, EnemyDeath2);
+			
+
+			player.attack(clock, chest, empty, snakeX, snakeY, birdX, birdY, playerX, playerY, EnemyDeath1, EnemyDeath2, EnemyDeath3, EnemyDeath4);
 		}
 
 		
-			//cout << iscollided << endl;	
+			
 		
 		
 		for (int i = 0; i < 9; i++)
@@ -293,22 +307,13 @@ int main()
 		}
 		EnemySpawn(clock);
 
-		for(int i = 1; i < 2; i++)
-	{
-	 int blockLocationX = 3 * 32;
-	 int blockLocationY = 7 * 32;
-	 int blockX = blockLocationX/32;
-	 int blockY = blockLocationY/32;
-	 block.setPosition( blockLocationX * i, blockLocationY);
-	
-		collision(player.x, player.y, blockLocationX, blockLocationY, block, blockX, blockY, playerX, playerY);
-	}
+		
 
 		app.draw(player.player);
 		
 		
 		
-		//Gravity(velocity, accelaration, x, y, player);
+		
 		app.display();
 	}
 	return 0;

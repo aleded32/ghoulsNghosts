@@ -17,8 +17,7 @@ using namespace sf;
 	const Vector2f gravity = Vector2f(0, 0.12f);
 	const Vector2f accelarationJump = Vector2f(0, 4.5f);
 	bool isJumping;
-	bool iscollidedRight = false;
-	bool iscollidedLeft = false;
+
 	bool facingleft = false; 
 
 	int gamefield[9][22] = 
@@ -99,7 +98,7 @@ public:
 		
 		 
 
-		if (Keyboard::isKeyPressed(Keyboard::D)  && !iscollidedLeft/*&& wall == false*/)
+		if (Keyboard::isKeyPressed(Keyboard::D)/*&& wall == false*/)
 		{
 			facingleft = false;
 			x  = x + velocityX.x;
@@ -108,7 +107,7 @@ public:
 			//cout << facingleft << endl;
 
 		}
-		else if (Keyboard::isKeyPressed(Keyboard::A) && !iscollidedRight)
+		else if (Keyboard::isKeyPressed(Keyboard::A))
 		{
 			
 			facingleft = true;
@@ -139,7 +138,7 @@ public:
 
 	
 	
-	void attack(Clock& clock, Sprite chest, Texture empty, int snakeX[2],int snakeY[2], int playerX, int playerY, void EnemyDeath1 (), void EnemyDeath2())
+	void attack(Clock& clock, Sprite chest, Texture empty, int snakeX[2],int snakeY[2],int birdX[2], int birdY[2], int playerX, int playerY, void EnemyDeath1 (), void EnemyDeath2(), void EnemyDeath3(), void EnemyDeath4())
 	{
 		
 		int itemSelected = 0;
@@ -224,7 +223,7 @@ public:
 				
 				}
 
-				if(dt >= 0.5)
+				if(dt >= 1)
 					{
 						clock.restart();
 					}
@@ -242,6 +241,11 @@ public:
 
 						death();
 					}
+					if (birdX[i] == playerX  && birdY[i] == playerY)
+					{
+
+						death();
+					}
 				}
 			
 					if(snakeX[1] == ShurikenX && snakeY[1] == ShurikenY)
@@ -251,7 +255,7 @@ public:
 						EnemyDamage = 0;
 						
 					}
-					else if(snakeX[1] == daggerX - 10 && snakeY[1] == daggerY)
+					else if(snakeX[1] == daggerX && snakeY[1] == daggerY)
 					{
 					 
 						EnemyDeath1();
@@ -272,8 +276,34 @@ public:
 						EnemyDamage = 0;
 						
 					}
-					
-			
+					else if(birdX[1] == daggerX && birdY[1] == daggerY)
+					{
+					 
+						EnemyDeath3();
+						EnemyDamage = 0;
+						
+					}
+					else if(birdX[2] == daggerX && birdY[2] == daggerY)
+					{
+					 
+						EnemyDeath4();
+						EnemyDamage = 0;
+						
+					}
+					else if(birdX[1] == ShurikenX && birdY[1] == ShurikenY)
+					{
+					 
+						EnemyDeath3();
+						EnemyDamage = 0;
+						
+					}
+					else if(birdX[2] == ShurikenX && birdY[2] == ShurikenY)
+					{
+					 
+						EnemyDeath4();
+						EnemyDamage = 0;
+						
+					}
 				
 
 			
