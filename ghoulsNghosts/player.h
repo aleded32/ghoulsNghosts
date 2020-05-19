@@ -17,6 +17,7 @@ using namespace sf;
 	const Vector2f gravity = Vector2f(0, 0.12f);
 	const Vector2f accelarationJump = Vector2f(0, 4.5f);
 	bool isJumping;
+	
 
 	bool facingleft = false; 
 
@@ -47,9 +48,13 @@ public:
 	Sprite player;
 	int playerHealth;
 	View playerView;
-	
+	int score;
 	int EnemyDamage;
-	
+	int enemydeaths;
+	bool isdeath1;
+	bool isdeath2;
+	bool isdeath3;
+	bool isdeath4;
 	
 	
 
@@ -59,12 +64,15 @@ public:
 		playerHealth = 300;
 		 x = 2*32;
 		 y = 7*32;
-		
-		
+		score = 0;
+		enemydeaths = 0;
 		playerText.loadFromFile("player.png");
 		player.setTexture(playerText);
 		player.setPosition(x, y);
-
+		bool isdeath1 = false;
+		bool isdeath2 = false;
+		bool isdeath3 = false;
+		bool isdeath4 = false;
 	}
 
 	~Player()
@@ -75,7 +83,7 @@ public:
 
 	void PlayerView()
 	{
-	playerView.reset(sf::FloatRect(0, 0, 300, 120));
+			playerView.reset(sf::FloatRect(0, 0, 300, 120));
 			playerView.setCenter(x,  y);
 			
 
@@ -89,7 +97,7 @@ public:
 				playerView.setCenter(550, y);
 			}
 		
-		app.setView(playerView);
+			app.setView(playerView);
 	}
 
 	void move()
@@ -240,6 +248,7 @@ public:
 					{
 
 						death();
+						//score = 0;
 					}
 					if (birdX[i] == playerX  && birdY[i] == playerY)
 					{
@@ -250,59 +259,102 @@ public:
 			
 					if(snakeX[1] == ShurikenX && snakeY[1] == ShurikenY)
 					{
-					 
+						
+						if(isdeath1 = false)
+						{
 						EnemyDeath1();
+						score+=20;
+						}
+						isdeath1 = true;
 						EnemyDamage = 0;
+						
+						
 						
 					}
 					else if(snakeX[1] == daggerX && snakeY[1] == daggerY)
 					{
 					 
-						EnemyDeath1();
+						if(isdeath1 == false)
+						{
+						 EnemyDeath1();
+						 score += 20;
+						}
+						isdeath1 = true;
 						EnemyDamage = 0;
 						
 					}
 					else if(snakeX[2] == ShurikenX && snakeY[2] == ShurikenY)
 					{
 					 
-						EnemyDeath2();
+						if(isdeath2 == false)
+						{
+						 EnemyDeath2();
+						 score += 20;
+						}
+						isdeath2 = true;
 						EnemyDamage = 0;
 						
-					}
+ 					}
 					else if(snakeX[2] == daggerX && snakeY[2] == daggerY)
 					{
 					 
-						EnemyDeath2();
+						if(isdeath2 == false)
+						{
+						 EnemyDeath2();
+						 score += 20;
+						}
+						isdeath2 = true;
 						EnemyDamage = 0;
+						
 						
 					}
 					else if(birdX[1] == daggerX && birdY[1] == daggerY)
 					{
 					 
-						EnemyDeath3();
+						if(isdeath3 == false)
+						{
+						 EnemyDeath3();
+						 score += 40;
+						}
+						isdeath3 = true;
 						EnemyDamage = 0;
+						
 						
 					}
 					else if(birdX[2] == daggerX && birdY[2] == daggerY)
 					{
 					 
-						EnemyDeath4();
+						if(isdeath4 == false)
+						{
+						 EnemyDeath4();
+						 score += 40;
+						}
+						isdeath4 = true;
 						EnemyDamage = 0;
-						
-					}
+					}	
 					else if(birdX[1] == ShurikenX && birdY[1] == ShurikenY)
 					{
 					 
-						EnemyDeath3();
+						if(isdeath3 == false)
+						{
+						 EnemyDeath3();
+						 score += 40;
+						}
+						isdeath3 = true;
 						EnemyDamage = 0;
 						
 					}
 					else if(birdX[2] == ShurikenX && birdY[2] == ShurikenY)
 					{
 					 
-						EnemyDeath4();
+						if(isdeath4 == false)
+						{
+						 EnemyDeath4();
+						 score += 40;
+						}
+						isdeath4 = true;
 						EnemyDamage = 0;
-						
+					
 					}
 				
 

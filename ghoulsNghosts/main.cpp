@@ -20,6 +20,7 @@ Texture backgroundText;
 Texture blockText;
 
 
+
 Texture chestText;
 Texture wallT;
 
@@ -61,6 +62,7 @@ void EnemyDeath1()
 	
 		
 		snakes[1].Enemy.setColor(Color::Transparent);
+		player.enemydeaths += 1;
 		
 
 	
@@ -71,7 +73,7 @@ void EnemyDeath2()
 	
 		
 		snakes[2].Enemy.setColor(Color::Transparent);
-		
+		player.enemydeaths += 1;
 
 	
 }
@@ -81,7 +83,7 @@ void EnemyDeath3()
 	
 		
 		birds[1].Bird.setColor(Color::Transparent);
-		
+		player.enemydeaths += 1;
 
 	
 }
@@ -91,8 +93,7 @@ void EnemyDeath4()
 	
 		
 		birds[2].Bird.setColor(Color::Transparent);
-		
-
+		player.enemydeaths += 1;
 	
 }
 
@@ -114,7 +115,7 @@ void EnemySpawn(Clock& clock)
 
 			birds[i].Bird.setScale(-1,1);
 			birds[i].y = 5 * 32;
-			birds[i].x = (i*7) * 32;
+			birds[i].x = ((i+1)*7) * 32;
 			
 
 			if(player.x >= snakes[i].x - 100  && player.x <= snakes[i].x)
@@ -191,6 +192,7 @@ int main()
 
 
 	
+	
 
 	//initallizes gamefield
 	for(int i = 0; i < 9; i++)
@@ -236,7 +238,15 @@ int main()
 		int DaggerX = int(Dagger.x / 32);
 		int DaggerY = int(Dagger.y / 32);
 
-		
+		Text score;
+		Font font;
+		font.loadFromFile("Acadian_Runes-Regular_PERSONAL_USE.ttf");
+		score.setFont(font);
+		score.setCharacterSize(18);
+		score.setFillColor(Color::White);
+		score.setPosition(player.x - 100, player.y - 50);
+		string scoreStr = to_string(player.score);
+		score.setString("Score: " + scoreStr);
 
 
 		//collision for player		
@@ -266,7 +276,7 @@ int main()
 		app.draw(background);
 		app.draw(chest);
 		app.draw(block);
-		
+		app.draw(score);
 		
 			player.move();
 		
