@@ -49,30 +49,30 @@ public:
 	int playerHealth;
 	View playerView;
 	int score;
-	int EnemyDamage;
-	int enemydeaths;
+	int snakeDamage;
+	int birdDamage;
 	bool isdeath1;
 	bool isdeath2;
 	bool isdeath3;
 	bool isdeath4;
-	
+	bool iscollision;
 	
 
 	Player()
 	{
-		EnemyDamage = 10;
-		playerHealth = 300;
+		birdDamage = 10;
+		snakeDamage = 10;
+		playerHealth = 600;
 		 x = 2*32;
 		 y = 7*32;
 		score = 0;
-		enemydeaths = 0;
 		playerText.loadFromFile("player.png");
 		player.setTexture(playerText);
 		player.setPosition(x, y);
-		bool isdeath1 = false;
-		bool isdeath2 = false;
-		bool isdeath3 = false;
-		bool isdeath4 = false;
+		isdeath1 = false;
+		isdeath2 = false;
+		isdeath4 = false;
+		iscollision = false;
 	}
 
 	~Player()
@@ -246,13 +246,13 @@ public:
 	
 					if (snakeX[i] == playerX && snakeY[i] == playerY)
 					{
+							playerHealth -= snakeDamage;
+							death();
 
-						death();
-						//score = 0;
 					}
 					if (birdX[i] == playerX  && birdY[i] == playerY)
 					{
-
+						playerHealth -= birdDamage;
 						death();
 					}
 				}
@@ -266,7 +266,7 @@ public:
 						score+=20;
 						}
 						isdeath1 = true;
-						EnemyDamage = 0;
+						snakeDamage = 0;
 						
 						
 						
@@ -280,7 +280,7 @@ public:
 						 score += 20;
 						}
 						isdeath1 = true;
-						EnemyDamage = 0;
+						snakeDamage = 0;
 						
 					}
 					else if(snakeX[2] == ShurikenX && snakeY[2] == ShurikenY)
@@ -292,7 +292,7 @@ public:
 						 score += 20;
 						}
 						isdeath2 = true;
-						EnemyDamage = 0;
+						snakeDamage = 0;
 						
  					}
 					else if(snakeX[2] == daggerX && snakeY[2] == daggerY)
@@ -304,7 +304,7 @@ public:
 						 score += 20;
 						}
 						isdeath2 = true;
-						EnemyDamage = 0;
+						snakeDamage = 0;
 						
 						
 					}
@@ -317,7 +317,7 @@ public:
 						 score += 40;
 						}
 						isdeath3 = true;
-						EnemyDamage = 0;
+						birdDamage = 0;
 						
 						
 					}
@@ -330,7 +330,7 @@ public:
 						 score += 40;
 						}
 						isdeath4 = true;
-						EnemyDamage = 0;
+						birdDamage = 0;
 					}	
 					else if(birdX[1] == ShurikenX && birdY[1] == ShurikenY)
 					{
@@ -341,7 +341,7 @@ public:
 						 score += 40;
 						}
 						isdeath3 = true;
-						EnemyDamage = 0;
+						birdDamage = 0;
 						
 					}
 					else if(birdX[2] == ShurikenX && birdY[2] == ShurikenY)
@@ -353,7 +353,7 @@ public:
 						 score += 40;
 						}
 						isdeath4 = true;
-						EnemyDamage = 0;
+						birdDamage = 0;
 					
 					}
 				
@@ -366,8 +366,8 @@ public:
 	 
 	void death() 
 	{
-		
-		playerHealth -= EnemyDamage;
+	    
+
 
 		if (playerHealth <= 0) 
 		{

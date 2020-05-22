@@ -9,7 +9,7 @@ public:
 	
 	float x;
 	float y;
-	int enemyHealth;
+	
 	Vector2f EnemySpeed;
 };
 
@@ -25,7 +25,6 @@ public:
 	snake()
 	{
 
-		enemyHealth = 20;
 		
 		enemyTile.loadFromFile("snake.png");
 		Enemy.setTexture(enemyTile);
@@ -55,12 +54,13 @@ class bird : public enemy
 
 		Texture enemyTile;
 		Sprite  Bird;
+		
 
 		bird()
 		{
 			enemyTile.loadFromFile("bird.png");
 			Bird.setTexture(enemyTile);
-			enemyHealth = 10;
+			
 		}
 
 		~bird(){}

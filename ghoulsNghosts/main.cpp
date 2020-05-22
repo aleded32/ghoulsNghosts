@@ -18,7 +18,7 @@ Texture floorText;
 Texture empty;
 Texture backgroundText;
 Texture blockText;
-
+Texture heartText;
 
 
 Texture chestText;
@@ -62,7 +62,7 @@ void EnemyDeath1()
 	
 		
 		snakes[1].Enemy.setColor(Color::Transparent);
-		player.enemydeaths += 1;
+		
 		
 
 	
@@ -73,7 +73,7 @@ void EnemyDeath2()
 	
 		
 		snakes[2].Enemy.setColor(Color::Transparent);
-		player.enemydeaths += 1;
+		
 
 	
 }
@@ -83,7 +83,7 @@ void EnemyDeath3()
 	
 		
 		birds[1].Bird.setColor(Color::Transparent);
-		player.enemydeaths += 1;
+		
 
 	
 }
@@ -93,7 +93,7 @@ void EnemyDeath4()
 	
 		
 		birds[2].Bird.setColor(Color::Transparent);
-		player.enemydeaths += 1;
+		
 	
 }
 
@@ -102,7 +102,7 @@ void EnemyDeath4()
 void EnemySpawn(Clock& clock)
 {
 	
-	float frequency = 5.0f;
+	float frequency = 2.5f;
 	float amplitude = 70.0f;
 	int distance = 80;
 
@@ -155,6 +155,7 @@ int main()
 	blockText.loadFromFile("wall.png");
 	
 	
+	heartText.loadFromFile("heart.png");
 	
 	
 
@@ -239,14 +240,43 @@ int main()
 		int DaggerY = int(Dagger.y / 32);
 
 		Text score;
+		Text health;
 		Font font;
 		font.loadFromFile("Acadian_Runes-Regular_PERSONAL_USE.ttf");
 		score.setFont(font);
 		score.setCharacterSize(18);
 		score.setFillColor(Color::White);
+		if (player.x <= 5 * 32) 
+		{
+			score.setPosition(50, player.y - 50);
+		}
+		else if (player.x >= 17 * 32) 
+		{
+			score.setPosition(450, player.y - 50);
+		}
+		else
+		{
 		score.setPosition(player.x - 100, player.y - 50);
+		}
 		string scoreStr = to_string(player.score);
 		score.setString("Score: " + scoreStr);
+		health.setFont(font);
+		health.setCharacterSize(18);
+		health.setFillColor(Color::White);
+		if (player.x <= 5 * 32) 
+		{
+			health.setPosition(150, player.y - 50);
+		}
+		else if (player.x >= 17 * 32) 
+		{
+			health.setPosition(550, player.y - 50);
+		}
+		else
+		{
+		health.setPosition(player.x, player.y - 50);
+		}
+		health.setString("health: ");
+
 
 
 		//collision for player		
@@ -277,11 +307,44 @@ int main()
 		app.draw(chest);
 		app.draw(block);
 		app.draw(score);
-		
+		app.draw(health);
+		for(int i = 0; i < 3; i++)
+	{
+		Sprite Heart[3];
+		Heart[i].setTexture(heartText);
+		if (player.x <= 5 * 32) 
+		{
+			Heart[i].setPosition((i*20) + 210, player.y - 45);
+		}
+		else if (player.x >= 17 * 32) 
+		{
+			Heart[i].setPosition((i*20) + 610, player.y - 45);
+		}
+		else
+		{
+			Heart[i].setPosition((i*20) + player.x + 60, player.y - 45);
+		}
+
+		if(player.playerHealth <= 400)
+		{
+			Heart[2].setColor(Color::Transparent);
+		}
+		if(player.playerHealth <= 200)
+		{
+			Heart[1].setColor(Color::Transparent);
+		}
+		if(player.playerHealth <= 0)
+		{
+			Heart[0].setColor(Color::Transparent);
+		}
+
+		app.draw(Heart[i]);
+	}
 			player.move();
 		
 		player.player.setPosition(player.x, player.y);
-
+		
+		app.draw(player.player);
 		for(int i = 1; i < 3; i++)
 		{
 			int snakeX[3];
@@ -295,6 +358,7 @@ int main()
 			birdY[i] = int(birds[i].y / 32);
 
 			
+						
 
 			player.attack(clock, chest, empty, snakeX, snakeY, birdX, birdY, playerX, playerY, EnemyDeath1, EnemyDeath2, EnemyDeath3, EnemyDeath4);
 		}
@@ -319,9 +383,8 @@ int main()
 
 		
 
-		app.draw(player.player);
 		
-		
+		cout << player.playerHealth << endl;
 		
 		
 		app.display();
