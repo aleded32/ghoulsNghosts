@@ -7,15 +7,15 @@ using namespace std;
 using namespace sf;
 
 	RenderWindow app(VideoMode(700, 285), "snakesNtigers");
-	Event e;
+
 	
 	float dt;
-
+	bool isgameOver = false;
 
 	Vector2f velocityY = Vector2f(0, 0.1f);
-	Vector2f velocityX = Vector2f(2.5f, 0.0f);
-	const Vector2f gravity = Vector2f(0, 0.12f);
-	const Vector2f accelarationJump = Vector2f(0, 4.5f);
+	Vector2f velocityX = Vector2f(1.5f, 0.0f);
+	const Vector2f gravity = Vector2f(0, 0.10f);
+	const Vector2f accelarationJump = Vector2f(0, 3.5f);
 	bool isJumping;
 	
 
@@ -23,14 +23,14 @@ using namespace sf;
 
 	int gamefield[9][22] = 
 	{
-	 2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-	 2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-	 2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-	 2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-	 2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-	 2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-	 2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-	 2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+	 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+	 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+	 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+	 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+	 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+	 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+	 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+	 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 	 1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1
 	 
 	};
@@ -103,16 +103,15 @@ public:
 	void move()
 	{
 
-		
-		 
 
-		if (Keyboard::isKeyPressed(Keyboard::D)/*&& wall == false*/)
+
+		if (Keyboard::isKeyPressed(Keyboard::D))
 		{
 			facingleft = false;
 			x  = x + velocityX.x;
 			player.setScale(1,1);
 		player.setPosition(x, y);
-			//cout << facingleft << endl;
+			
 
 		}
 		else if (Keyboard::isKeyPressed(Keyboard::A))
@@ -122,18 +121,18 @@ public:
 			x = x - velocityX.x; 
 			player.setScale(-1,1);
 			player.setPosition(x, y);
-			//cout << facingleft << endl;
+		
 			
 		}
 
 		if (player.getPosition().y >= 220 && Keyboard::isKeyPressed(Keyboard::Space) && isJumping == false) 
 			{
 				isJumping = true;
-				velocityY.y = velocityY.y - accelarationJump.y;
+				velocityY.y -= accelarationJump.y;
 
 				y += velocityY.y * 0.5;
 			}
-			else if (player.getPosition().y <= 220)
+		else if (player.getPosition().y <= 220)
 			{
 				velocityY.y = velocityY.y + gravity.y;
 
@@ -231,7 +230,7 @@ public:
 				
 				}
 
-				if(dt >= 1)
+				if(dt >= 1.5)
 					{
 						clock.restart();
 					}
@@ -250,11 +249,19 @@ public:
 							death();
 
 					}
+					
+
 					if (birdX[i] == playerX  && birdY[i] == playerY)
 					{
 						playerHealth -= birdDamage;
 						death();
 					}
+					else if(birdX[i] == playerX + 1 && birdY[i] == playerY - 1)
+					{
+						playerHealth -= birdDamage;
+						death();
+					}
+					
 				}
 			
 					if(snakeX[1] == ShurikenX && snakeY[1] == ShurikenY)
@@ -308,7 +315,7 @@ public:
 						
 						
 					}
-					else if(birdX[1] == daggerX && birdY[1] == daggerY)
+					else if(birdX[1] == daggerX + 1 && birdY[1] == daggerY)
 					{
 					 
 						if(isdeath3 == false)
@@ -321,7 +328,7 @@ public:
 						
 						
 					}
-					else if(birdX[2] == daggerX && birdY[2] == daggerY)
+					else if(birdX[2] == daggerX + 1 && birdY[2] == daggerY)
 					{
 					 
 						if(isdeath4 == false)
@@ -366,12 +373,10 @@ public:
 	 
 	void death() 
 	{
-	    
-
 
 		if (playerHealth <= 0) 
 		{
-			app.close();
+			isgameOver = true;
 		}
 	}
 	

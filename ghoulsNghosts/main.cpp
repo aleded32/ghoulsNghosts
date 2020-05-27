@@ -37,19 +37,19 @@ int tileX = 1;
 int tileY = 8;
 
 
-void spawn(Sprite floor, Sprite empty, Sprite wall, Texture tile[3],  int tileX, int tileY) 
+void spawn(Sprite game, Texture tile[3],  int tileX, int tileY) 
 {
 
 	
 
 
-	floor.setTexture(tile[0]);
-	floor.setPosition(tileX * 32, tileY * 32);
+	game.setTexture(tile[0]);
+	game.setPosition(tileX * 32, tileY * 32);
 
 
 
 
-	app.draw(floor);
+	app.draw(game);
 	
 
 }
@@ -111,18 +111,17 @@ void EnemySpawn(Clock& clock)
 			snakes[i].EnemySpeed = Vector2f(10, 0);
 
 			snakes[i].y = 7 * 33;
-			snakes[i].x = (i*6) * 32;
+			snakes[i].x = (i*6)  * 32;
 
 			birds[i].Bird.setScale(-1,1);
 			birds[i].y = 5 * 32;
 			birds[i].x = ((i+1)*7) * 32;
 			
 
-			if(player.x >= snakes[i].x - 100  && player.x <= snakes[i].x)
-			{
+			
 
-				snakes[i].x -=   6 * (snakes[i].EnemySpeed.x * dt);
-			} 
+			snakes[i].x -=   6 * (snakes[i].EnemySpeed.x * dt);
+			
 			
 			
 			birds[i].x += distance *(-2 * dt);
@@ -188,42 +187,29 @@ int main()
 	
 	Thread t1(&Player::PlayerView, &player);
 
-	Sprite Empty;
-	Empty.setColor(Color::Transparent);
+	/*Sprite Empty;
+	Empty.setColor(Color::Transparent);*/
 
 
 	
 	
 
 	//initallizes gamefield
-	for(int i = 0; i < 9; i++)
-	{
-		for(int j = 0; j<22; j++)
-		{
-			
-			
-			gamefield[tileY][tileX] = 2;
-			gamefield[tileY][tileX] = 0;
-			gamefield[tileY][tileX] = 1;
-			
-			
-		
-		}
-		cout << endl;
-	}
+	
 
 	while (app.isOpen()) 
 	{
-
+			Event e;
 		while (app.pollEvent(e)) 
 		{
-			if (e.type == Event::Closed) 
+			if (e.type == Event::Closed || Keyboard::isKeyPressed(Keyboard::Escape)) 
 			{
 				
 				t1.wait();
 				
 				app.close();
 			}
+			
 			
 		}
 			
@@ -246,43 +232,49 @@ int main()
 		score.setFont(font);
 		score.setCharacterSize(18);
 		score.setFillColor(Color::White);
-		if (player.x <= 5 * 32) 
-		{
-			score.setPosition(50, player.y - 50);
-		}
-		else if (player.x >= 17 * 32) 
-		{
-			score.setPosition(450, player.y - 50);
-		}
-		else
-		{
-		score.setPosition(player.x - 100, player.y - 50);
-		}
 		string scoreStr = to_string(player.score);
 		score.setString("Score: " + scoreStr);
 		health.setFont(font);
 		health.setCharacterSize(18);
 		health.setFillColor(Color::White);
+		health.setString("health: ");
+		Text gameOver;
+		gameOver.setFont(font);
+		gameOver.setCharacterSize(18);
+		gameOver.setFillColor(Color::Black);
+		gameOver.setString("Game Over, press Esc to close game");
+
 		if (player.x <= 5 * 32) 
 		{
+			score.setPosition(50, player.y - 50);
 			health.setPosition(150, player.y - 50);
+			gameOver.setPosition(0, player.y- 20);
+
 		}
 		else if (player.x >= 17 * 32) 
 		{
+			score.setPosition(450, player.y - 50);
 			health.setPosition(550, player.y - 50);
+			gameOver.setPosition(410, player.y - 20);
 		}
 		else
 		{
-		health.setPosition(player.x, player.y - 50);
+			score.setPosition(player.x - 100, player.y - 50);
+			health.setPosition(player.x, player.y - 50);
+			gameOver.setPosition(player.x - 140, player.y - 20);
 		}
-		health.setString("health: ");
 
+		
+		
 
+		
+
+		
 
 		//collision for player		
 		if (gamefield[playerY+1][playerX] == 1) 
 		{
-			velocityY.y = NULL;
+			velocityY.y = 0;
 			isJumping = false;
 			
 
@@ -297,10 +289,10 @@ int main()
 		}
 		
 
-		//cout << player.playerHealth << endl;    
+		   
 		shuriken Shuriken;
 		
-
+		
 		app.clear();
 		
 		app.draw(background);
@@ -308,83 +300,108 @@ int main()
 		app.draw(block);
 		app.draw(score);
 		app.draw(health);
+
 		for(int i = 0; i < 3; i++)
-	{
-		Sprite Heart[3];
-		Heart[i].setTexture(heartText);
-		if (player.x <= 5 * 32) 
 		{
-			Heart[i].setPosition((i*20) + 210, player.y - 45);
-		}
-		else if (player.x >= 17 * 32) 
-		{
-			Heart[i].setPosition((i*20) + 610, player.y - 45);
-		}
-		else
-		{
-			Heart[i].setPosition((i*20) + player.x + 60, player.y - 45);
-		}
+			Sprite Heart[3];
+			Heart[i].setTexture(heartText);
+			if (player.x <= 5 * 32) 
+			{
+				Heart[i].setPosition((i*20) + 210, player.y - 45);
+			}
+			else if (player.x >= 17 * 32) 
+			{
+				Heart[i].setPosition((i*20) + 610, player.y - 45);
+			}
+			else
+			{
+				Heart[i].setPosition((i*20) + player.x + 60, player.y - 45);
+			}
 
-		if(player.playerHealth <= 400)
-		{
-			Heart[2].setColor(Color::Transparent);
-		}
-		if(player.playerHealth <= 200)
-		{
-			Heart[1].setColor(Color::Transparent);
-		}
-		if(player.playerHealth <= 0)
-		{
-			Heart[0].setColor(Color::Transparent);
-		}
+			if(player.playerHealth <= 400)
+			{
+				Heart[2].setColor(Color::Transparent);
+			}
+			if(player.playerHealth <= 200)
+			{
+				Heart[1].setColor(Color::Transparent);
+			}
+			if (player.playerHealth <= 0)
+			{
+				Heart[0].setColor(Color::Transparent);
+			}
 
-		app.draw(Heart[i]);
+			app.draw(Heart[i]);
 	}
-			player.move();
-		
-		player.player.setPosition(player.x, player.y);
-		
-		app.draw(player.player);
-		for(int i = 1; i < 3; i++)
+		if(!isgameOver)
 		{
-			int snakeX[3];
-			int snakeY[3];
-			int birdX[3];
-			int birdY[3];
+			player.move();
 
-			snakeX[i] = int(snakes[i].x / 32);
-			snakeY[i] = int(snakes[i].y / 32);
-			birdX[i] = int(birds[i].x / 32);
-			birdY[i] = int(birds[i].y / 32);
+			for(int i = 1; i < 3; i++)
+			{
+				int snakeX[3];
+				int snakeY[3];
+				int birdX[3];
+				int birdY[3];
+
+				snakeX[i] = int(snakes[i].x / 32);
+				snakeY[i] = int(snakes[i].y / 32);
+				birdX[i] = int(birds[i].x / 32);
+				birdY[i] = int(birds[i].y / 32);
 
 			
 						
 
-			player.attack(clock, chest, empty, snakeX, snakeY, birdX, birdY, playerX, playerY, EnemyDeath1, EnemyDeath2, EnemyDeath3, EnemyDeath4);
+				player.attack(clock, chest, empty, snakeX, snakeY, birdX, birdY, playerX, playerY, EnemyDeath1, EnemyDeath2, EnemyDeath3, EnemyDeath4);
+			}
+
+		}
+		
+		else
+		{
+			app.draw(gameOver);
 		}
 
+		if(playerX >= 22)
+		{
+			
+			isgameOver = true;
+		}
+		else if (player.x <= 0)
+		{
+			
+			velocityX.x = -1;	
+		}
+		else if(player.x >= 8)
+		{
+		    velocityX.x = + 2.5;
+		}
+		
 		
 			
-		
-		
+		player.player.setPosition(player.x, player.y);
+		app.draw(player.player);
+		EnemySpawn(clock);
+
+
 		for (int i = 0; i < 9; i++)
 		{
 			for (int j = 0; j < 22; j++)
 			{
 				
 				
-			spawn(floor ,Empty,wall, &tile[gamefield[i][j]], j, i);
+			spawn(floor, &tile[gamefield[i][j]], j, i);
 				
 
 			}
 			
 		}
-		EnemySpawn(clock);
-
 		
 
 		
-		cout << player.playerHealth << endl;
+
+		
+		
 		
 		
 		app.display();
