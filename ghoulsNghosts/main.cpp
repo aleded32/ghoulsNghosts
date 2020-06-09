@@ -33,8 +33,7 @@ dagger Dagger;
 
 
 
-int tileX = 1;
-int tileY = 8;
+
 
 
 void spawn(Sprite game, Texture tile[3],  int tileX, int tileY) 
@@ -101,7 +100,7 @@ void EnemyDeath4()
 
 void EnemySpawn(Clock& clock)
 {
-	
+	float deltaTime = clock.getElapsedTime().asSeconds();
 	float frequency = 2.5f;
 	float amplitude = 70.0f;
 	int distance = 80;
@@ -120,12 +119,12 @@ void EnemySpawn(Clock& clock)
 
 			
 
-			snakes[i].x -=   6 * (snakes[i].EnemySpeed.x * dt);
+			snakes[i].x -=   6 * (snakes[i].EnemySpeed.x * deltaTime);
 			
 			
 			
-			birds[i].x += distance *(-2 * dt);
-			birds[i].y += (sin(frequency * dt) * amplitude);
+			birds[i].x += distance *(-2 * deltaTime);
+			birds[i].y += (sin(frequency * deltaTime) * amplitude);
 			
 
 			birds[i].Bird.setPosition(birds[i].x, birds[i].y);
@@ -133,7 +132,10 @@ void EnemySpawn(Clock& clock)
 			app.draw(birds[i].Bird);
 			app.draw(snakes[i].Enemy);
 
-
+			if(deltaTime >= 1.2)
+			{
+				clock.restart();
+			}
 			
 		}
 }
@@ -143,6 +145,7 @@ void EnemySpawn(Clock& clock)
 int main()
 {
 	Clock clock;
+	Clock weaponClock;
 	app.setFramerateLimit(60);
 	
 	
@@ -349,12 +352,36 @@ int main()
 				birdX[i] = int(birds[i].x / 32);
 				birdY[i] = int(birds[i].y / 32);
 
-			
+				if (snakes[i].Enemy.getGlobalBounds().intersects(player.player.getGlobalBounds()))
+					{
+							
+							player.playerHealth -= player.snakeDamage;
+							player.death();
+							cout << "collision" << endl;
+
+					}
+
+				if (birds[i].Bird.getGlobalBounds().intersects(player.player.getGlobalBounds()))
+					{
+							player.playerHealth -= player.birdDamage;
+							player.death();
+							cout << "collision" << endl;
+
+					}
+
 						
 
-				player.attack(clock, chest, empty, snakeX, snakeY, birdX, birdY, playerX, playerY, EnemyDeath1, EnemyDeath2, EnemyDeath3, EnemyDeath4);
+				player.attack(weaponClock,empty,snakeX,snakeY,birdX, birdY, playerX, playerY, EnemyDeath1, EnemyDeath2, EnemyDeath3, EnemyDeath4);
 			}
-
+			
+			if(player.player.getGlobalBounds().intersects(chest.getGlobalBounds()))
+			{
+					
+						
+						player.itemSelected = 1;
+						chest.setPosition(-50,-50);
+						cout << 1 << endl;
+			}
 		}
 		
 		else

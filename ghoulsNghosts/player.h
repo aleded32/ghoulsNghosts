@@ -56,7 +56,7 @@ public:
 	bool isdeath3;
 	bool isdeath4;
 	bool iscollision;
-	
+	int itemSelected;
 
 	Player()
 	{
@@ -73,6 +73,7 @@ public:
 		isdeath2 = false;
 		isdeath4 = false;
 		iscollision = false;
+		itemSelected = 0;
 	}
 
 	~Player()
@@ -145,11 +146,12 @@ public:
 
 	
 	
-	void attack(Clock& clock, Sprite chest, Texture empty, int snakeX[2],int snakeY[2],int birdX[2], int birdY[2], int playerX, int playerY, void EnemyDeath1 (), void EnemyDeath2(), void EnemyDeath3(), void EnemyDeath4())
+	void attack(Clock& clock, Texture empty, int snakeX[2],int snakeY[2],int birdX[2], int birdY[2], int playerX, int playerY, void EnemyDeath1 (), void EnemyDeath2(), void EnemyDeath3(), void EnemyDeath4())
 	{
+		bool fired = false;
 		
-		int itemSelected = 0;
 		dt = clock.getElapsedTime().asSeconds();
+
 
 		dagger Dagger;
 		shuriken Shuriken;
@@ -157,21 +159,6 @@ public:
 			
 			Shuriken.ShurikenSpeed = Vector2f(300.0f,0);
 			
-
-			if(x >= chest.getPosition().x)
-			{
-					
-						chest.setColor(Color::Transparent);
-						itemSelected = 1;
-					
-					
-			}
-			else
-			{
-				int itemSelected = 0;
-			}
-			
-
 		
 				if(itemSelected == 0)
 				{
@@ -207,7 +194,7 @@ public:
 					
 					if(Keyboard::isKeyPressed(Keyboard::L) && (!facingleft) && !Keyboard::isKeyPressed(Keyboard::D))
 					{
-						//fired = true;
+						fired = true;
 						Shuriken.x = x;
 						Shuriken.y = y;
 						Shuriken.x += (Shuriken.ShurikenSpeed.x * dt);
@@ -218,7 +205,7 @@ public:
 					}
 					else if(Keyboard::isKeyPressed(Keyboard::L) && (facingleft) && !Keyboard::isKeyPressed(Keyboard::A))
 					{
-						//fired = true;
+						fired = true;
 						Shuriken.x = x;
 						Shuriken.y = y;
 						Shuriken.Shuriken.setScale(-1,1);
@@ -230,7 +217,7 @@ public:
 				
 				}
 
-				if(dt >= 1.5)
+				if(dt >= 1.5 || fired == false)
 					{
 						clock.restart();
 					}
@@ -240,29 +227,7 @@ public:
 				int daggerX = (int)Dagger.x/32;
 				int daggerY = (int)Dagger.y/32;
 
-				for(int i = 1; i < 3; i++ )
-				{
-	
-					if (snakeX[i] == playerX && snakeY[i] == playerY)
-					{
-							playerHealth -= snakeDamage;
-							death();
-
-					}
-					
-
-					if (birdX[i] == playerX  && birdY[i] == playerY)
-					{
-						playerHealth -= birdDamage;
-						death();
-					}
-					else if(birdX[i] == playerX + 1 && birdY[i] == playerY - 1)
-					{
-						playerHealth -= birdDamage;
-						death();
-					}
-					
-				}
+				
 			
 					if(snakeX[1] == ShurikenX && snakeY[1] == ShurikenY)
 					{
