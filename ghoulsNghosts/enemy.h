@@ -1,4 +1,5 @@
 #pragma once
+#define MAX_ENEMIES 3
 
 using namespace std;
 using namespace sf;
@@ -11,6 +12,9 @@ public:
 	float y;
 	
 	Vector2f EnemySpeed;
+
+	
+
 };
 
 class snake : public enemy

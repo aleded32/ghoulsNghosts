@@ -280,7 +280,7 @@ public:
 						
 						
 					}
-					else if(birdX[1] == daggerX + 1 && birdY[1] == daggerY)
+					else if(birdX[1] == daggerX  && birdY[1] == daggerY)
 					{
 					 
 						if(isdeath3 == false)
@@ -293,7 +293,7 @@ public:
 						
 						
 					}
-					else if(birdX[2] == daggerX + 1 && birdY[2] == daggerY)
+					else if(birdX[2] == daggerX && birdY[2] == daggerY)
 					{
 					 
 						if(isdeath4 == false)

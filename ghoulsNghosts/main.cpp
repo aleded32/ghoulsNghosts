@@ -4,7 +4,7 @@
 #include "player.h"
 #include "enemy.h"
 #include "item.h"
-
+#include <SFML\Audio.hpp>
 
 
 using namespace std;
@@ -19,20 +19,69 @@ Texture empty;
 Texture backgroundText;
 Texture blockText;
 Texture heartText;
-
+bool isleft = true;
 
 Texture chestText;
 Texture wallT;
 
-snake snakes[4];
-bird  birds[3];
-Player player;
-shuriken Shuriken;
-dagger Dagger;
+snake snakes[MAX_ENEMIES];
+bird  birds[MAX_ENEMIES];
 
 
 
 
+void EnemyMove(Clock& clock, snake snakes[], bird birds[])
+	{
+		float deltaTime = clock.getElapsedTime().asSeconds();
+		float frequency = 2.5f;
+		float amplitude = 70.0f;
+		float distance =  100.0f;
+
+		for(int i = 1; i < MAX_ENEMIES; i++)
+			{
+				snakes[i].EnemySpeed = Vector2f(1, 0);
+				birds[i].EnemySpeed = Vector2f(1.1, 0);
+				
+				birds[i].Bird.setScale(-1,1);
+				birds[i].y = 5 * 32;
+				birds[i].x = ((i+1)*7) * 32;
+				
+			
+				if(snakes[1].x < 200 && isleft == true)
+				{	
+					snakes[i].x -=  snakes[i].EnemySpeed.x;
+					
+				}
+				else if(snakes[1].x < 200 && isleft == false)
+				{
+					snakes[i].x +=  snakes[i].EnemySpeed.x;
+				}
+
+				if(snakes[1].x <= 100)
+				{
+					isleft = false;
+				}
+				if(snakes[1].x >= 199)
+				{
+					isleft = true;
+				}
+
+				birds[i].x -=  distance * (birds[i].EnemySpeed.x * deltaTime);
+				birds[i].y += (sin(frequency * deltaTime) * amplitude);
+				
+
+				if(deltaTime >=4)
+				{
+					clock.restart();
+				}
+
+				birds[i].Bird.setPosition(birds[i].x, birds[i].y);
+				snakes[i].Enemy.setPosition(snakes[i].x, snakes[i].y);
+				app.draw(birds[i].Bird);
+				app.draw(snakes[i].Enemy);
+				
+			}
+	}
 
 
 
@@ -52,6 +101,8 @@ void spawn(Sprite game, Texture tile[3],  int tileX, int tileY)
 	
 
 }
+
+
 
 
 
@@ -98,74 +149,39 @@ void EnemyDeath4()
 
 
 
-void EnemySpawn(Clock& clock)
-{
-	float deltaTime = clock.getElapsedTime().asSeconds();
-	float frequency = 2.5f;
-	float amplitude = 70.0f;
-	int distance = 80;
 
-	for(int i = 1; i < 3; i++)
-		{
-			snakes[i].EnemySpeed = Vector2f(10, 0);
-
-			snakes[i].y = 7 * 33;
-			snakes[i].x = (i*6)  * 32;
-
-			birds[i].Bird.setScale(-1,1);
-			birds[i].y = 5 * 32;
-			birds[i].x = ((i+1)*7) * 32;
-			
-
-			
-
-			snakes[i].x -=   6 * (snakes[i].EnemySpeed.x * deltaTime);
-			
-			
-			
-			birds[i].x += distance *(-2 * deltaTime);
-			birds[i].y += (sin(frequency * deltaTime) * amplitude);
-			
-
-			birds[i].Bird.setPosition(birds[i].x, birds[i].y);
-			snakes[i].Enemy.setPosition(snakes[i].x, snakes[i].y);
-			app.draw(birds[i].Bird);
-			app.draw(snakes[i].Enemy);
-
-			if(deltaTime >= 1.2)
-			{
-				clock.restart();
-			}
-			
-		}
-}
 
 
 
 int main()
 {
+	//clocks used in game
 	Clock clock;
 	Clock weaponClock;
 	app.setFramerateLimit(60);
 	
-	
 
+	//spawning in sprites and textures
 	Sprite floor;
 	Sprite wall;
 	wall.setColor(Color::Transparent);
 	floorText.loadFromFile("floor.png");
 	blockText.loadFromFile("wall.png");
 	
-	
 	heartText.loadFromFile("heart.png");
 	
-	
-
 
 	Texture tile[3] = { empty, floorText, wallT};
 
 
-	
+	//music
+	SoundBuffer buffer;
+	buffer.loadFromFile("background.wav");
+	sf::Sound backgroundMusic;
+	backgroundMusic.setBuffer(buffer);
+	backgroundMusic.play();
+	backgroundMusic.setLoop(true);
+
 
 	Sprite background;
 	backgroundText.loadFromFile("background.png");
@@ -183,22 +199,31 @@ int main()
 	Sprite block;
 	block.setTexture(blockText);
 	
-
+	//spawn enemies in the game
+	for(int i = 1; i < MAX_ENEMIES; i++)
+	{
+		snakes[i].y = 7 * 33;
+		snakes[i].x = (i*6)  * 32;	
+	}
+	
 	
 
+	Sprite Empty;
+	Empty.setColor(Color::Transparent);
+
+
+	//pointers and classes called
+	Player player;
+	Player *ptrPlayer;
+
+	ptrPlayer = &player;
+
+	shuriken Shuriken;
+	dagger Dagger;
+
 	
-	
+	//creating a thread to place the playerview on
 	Thread t1(&Player::PlayerView, &player);
-
-	/*Sprite Empty;
-	Empty.setColor(Color::Transparent);*/
-
-
-	
-	
-
-	//initallizes gamefield
-	
 
 	while (app.isOpen()) 
 	{
@@ -228,6 +253,7 @@ int main()
 		int DaggerX = int(Dagger.x / 32);
 		int DaggerY = int(Dagger.y / 32);
 
+		//generate text and imagaes for health and score
 		Text score;
 		Text health;
 		Font font;
@@ -247,6 +273,7 @@ int main()
 		gameOver.setFillColor(Color::Black);
 		gameOver.setString("Game Over, press Esc to close game");
 
+		//gameOver screen
 		if (player.x <= 5 * 32) 
 		{
 			score.setPosition(50, player.y - 50);
@@ -268,11 +295,6 @@ int main()
 		}
 
 		
-		
-
-		
-
-		
 
 		//collision for player		
 		if (gamefield[playerY+1][playerX] == 1) 
@@ -290,10 +312,14 @@ int main()
 		
 			 player.y += velocityY.y;
 		}
-		
+		if(player.x <= 10)
+		{
+			player.x = 10;
+			
+			
+		}
 
 		   
-		shuriken Shuriken;
 		
 		
 		app.clear();
@@ -340,7 +366,7 @@ int main()
 		{
 			player.move();
 
-			for(int i = 1; i < 3; i++)
+			for(int i = 1; i < MAX_ENEMIES; i++)
 			{
 				int snakeX[3];
 				int snakeY[3];
@@ -355,30 +381,30 @@ int main()
 				if (snakes[i].Enemy.getGlobalBounds().intersects(player.player.getGlobalBounds()))
 					{
 							
-							player.playerHealth -= player.snakeDamage;
-							player.death();
-							cout << "collision" << endl;
-
+							ptrPlayer ->playerHealth -= ptrPlayer ->snakeDamage;
+							ptrPlayer ->death();
+							
 					}
 
-				if (birds[i].Bird.getGlobalBounds().intersects(player.player.getGlobalBounds()))
+				else if (birds[i].Bird.getGlobalBounds().intersects(player.player.getGlobalBounds()))
 					{
-							player.playerHealth -= player.birdDamage;
-							player.death();
-							cout << "collision" << endl;
-
+							ptrPlayer ->playerHealth -= ptrPlayer ->birdDamage;
+							ptrPlayer ->death();
+							
 					}
-
+				
+						
+					
 						
 
-				player.attack(weaponClock,empty,snakeX,snakeY,birdX, birdY, playerX, playerY, EnemyDeath1, EnemyDeath2, EnemyDeath3, EnemyDeath4);
+				ptrPlayer ->attack(weaponClock,empty,snakeX,snakeY,birdX, birdY, playerX, playerY, EnemyDeath1, EnemyDeath2, EnemyDeath3, EnemyDeath4);
 			}
 			
 			if(player.player.getGlobalBounds().intersects(chest.getGlobalBounds()))
 			{
 					
 						
-						player.itemSelected = 1;
+						ptrPlayer ->itemSelected = 1;
 						chest.setPosition(-50,-50);
 						cout << 1 << endl;
 			}
@@ -394,21 +420,13 @@ int main()
 			
 			isgameOver = true;
 		}
-		else if (player.x <= 0)
-		{
-			
-			velocityX.x = -1;	
-		}
-		else if(player.x >= 8)
-		{
-		    velocityX.x = + 2.5;
-		}
+		
 		
 		
 			
-		player.player.setPosition(player.x, player.y);
-		app.draw(player.player);
-		EnemySpawn(clock);
+		ptrPlayer ->player.setPosition(player.x, player.y);
+		app.draw(ptrPlayer ->player);
+		EnemyMove(clock, snakes, birds);
 
 
 		for (int i = 0; i < 9; i++)

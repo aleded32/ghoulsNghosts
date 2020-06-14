@@ -34,7 +34,7 @@ public:
 		
 	}
 
-	//~dagger(){}
+	~dagger(){}
 
 };
 
@@ -57,7 +57,7 @@ class shuriken : public item
 
 	}
 
-	//~shuriken(){}
+	~shuriken(){}
 
 
 };
