@@ -169,7 +169,7 @@ int main()
 	blockText.loadFromFile("wall.png");
 	
 	heartText.loadFromFile("heart.png");
-	
+	 
 
 	Texture tile[3] = { empty, floorText, wallT};
 
